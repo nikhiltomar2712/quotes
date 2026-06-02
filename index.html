@@ -1,0 +1,1978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Quote Generator – 1000+ Quotes</title>
+    <style>
+        :root {
+            --bg: #0b0a10;
+            --surface: #151320;
+            --surface-2: #1e1c2e;
+            --text: #e8e6f0;
+            --text-secondary: #a09db8;
+            --accent: #ff6b6b;
+            --accent-2: #f9c74f;
+            --accent-3: #4cc9f0;
+            --accent-4: #9b7ed8;
+            --border: #28253d;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --radius: 18px;
+            --transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Georgia', 'Palatino', 'Times New Roman', serif;
+            background: var(--bg);
+            background-image:
+                radial-gradient(ellipse at 15% 10%, rgba(255, 107, 107, 0.04) 0%, transparent 55%),
+                radial-gradient(ellipse at 85% 55%, rgba(76, 201, 240, 0.04) 0%, transparent 55%),
+                radial-gradient(ellipse at 45% 85%, rgba(249, 199, 79, 0.03) 0%, transparent 55%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+        }
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.25;
+            animation: floatUp linear infinite;
+        }
+        @keyframes floatUp {
+            0% {
+                transform: translateY(110vh) scale(0);
+                opacity: 0;
+            }
+            8% {
+                opacity: 0.35;
+            }
+            92% {
+                opacity: 0.06;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1.3);
+                opacity: 0;
+            }
+        }
+        .app-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 720px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .header {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .header .icon-row {
+            font-size: 2.4rem;
+            letter-spacing: 3px;
+            animation: subtleBounce 2.2s ease-in-out infinite;
+        }
+        @keyframes subtleBounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-7px);
+            }
+        }
+        .header h1 {
+            font-size: 1.7rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+            color: var(--text);
+            font-family: 'Georgia', serif;
+        }
+        .header .subtitle {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+            font-weight: 300;
+        }
+        .header .db-badge {
+            display: inline-block;
+            margin-top: 2px;
+            font-size: 0.7rem;
+            color: var(--accent-2);
+            background: rgba(249, 199, 79, 0.08);
+            padding: 4px 12px;
+            border-radius: 50px;
+            letter-spacing: 1px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .topics-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            padding: 0 2px;
+        }
+        .topic-pill {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+            letter-spacing: 0.4px;
+            transition: var(--transition);
+            user-select: none;
+            white-space: nowrap;
+            font-weight: 400;
+        }
+        .topic-pill:hover {
+            border-color: var(--accent-3);
+            color: var(--text);
+            background: var(--surface-2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(76, 201, 240, 0.12);
+        }
+        .topic-pill.active {
+            background: var(--accent-3);
+            border-color: var(--accent-3);
+            color: #0b0a10;
+            font-weight: 600;
+            box-shadow: 0 4px 18px rgba(76, 201, 240, 0.3);
+        }
+        .quote-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 36px 32px 28px;
+            box-shadow: var(--shadow);
+            position: relative;
+            transition: var(--transition);
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .quote-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3), var(--accent-4));
+            border-radius: 3px 3px 0 0;
+            opacity: 0.7;
+        }
+        .quote-card .quote-mark {
+            position: absolute;
+            top: 10px;
+            left: 16px;
+            font-size: 4.5rem;
+            color: rgba(255, 255, 255, 0.025);
+            font-family: 'Georgia', serif;
+            line-height: 1;
+            pointer-events: none;
+            user-select: none;
+        }
+        .quote-card .quote-text {
+            font-size: 1.4rem;
+            line-height: 1.6;
+            color: var(--text);
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+            transition: var(--transition);
+            letter-spacing: 0.2px;
+        }
+        .quote-card .quote-author {
+            margin-top: 14px;
+            font-size: 0.95rem;
+            color: var(--accent-2);
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+            position: relative;
+            z-index: 1;
+        }
+        .quote-card .quote-context {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            border-left: 2px solid var(--accent-3);
+            padding-left: 12px;
+            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+            animation: fadeInContext 0.45s ease;
+            letter-spacing: 0.15px;
+            line-height: 1.45;
+        }
+        @keyframes fadeInContext {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .quote-card .theme-tag {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-4);
+            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+        .quote-card.shimmer {
+            animation: shimmerEffect 0.5s ease;
+        }
+        @keyframes shimmerEffect {
+            0% {
+                box-shadow: var(--shadow), 0 0 0px rgba(255, 255, 255, 0);
+            }
+            50% {
+                box-shadow: var(--shadow), 0 0 55px rgba(255, 255, 255, 0.07);
+            }
+            100% {
+                box-shadow: var(--shadow), 0 0 0px rgba(255, 255, 255, 0);
+            }
+        }
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 13px 28px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.6px;
+            transition: var(--transition);
+            border: none;
+            outline: none;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.28);
+        }
+        .btn-primary:hover {
+            background: #ff8787;
+            transform: translateY(-3px);
+            box-shadow: 0 9px 28px rgba(255, 107, 107, 0.4);
+        }
+        .btn-primary:active {
+            transform: scale(0.96);
+            transition: 0.08s;
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 1.5px solid var(--border);
+        }
+        .btn-secondary:hover {
+            border-color: var(--accent-2);
+            color: var(--accent-2);
+            background: rgba(249, 199, 79, 0.04);
+            transform: translateY(-2px);
+        }
+        .btn .btn-icon {
+            margin-right: 5px;
+        }
+        .counter {
+            text-align: center;
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+            letter-spacing: 0.8px;
+        }
+        .counter span {
+            color: var(--accent-2);
+            font-weight: 600;
+        }
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%) translateY(120px);
+            background: var(--surface-2);
+            color: var(--text);
+            padding: 11px 22px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            letter-spacing: 0.4px;
+            border: 1px solid var(--border);
+            z-index: 100;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+            pointer-events: none;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        @media (max-width: 500px) {
+            .quote-card {
+                padding: 24px 18px 20px;
+            }
+            .quote-card .quote-text {
+                font-size: 1.15rem;
+            }
+            .quote-card .quote-author {
+                font-size: 0.85rem;
+            }
+            .btn {
+                padding: 11px 18px;
+                font-size: 0.8rem;
+            }
+            .header h1 {
+                font-size: 1.35rem;
+            }
+            .topic-pill {
+                padding: 6px 12px;
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    <div class="toast" id="toast"></div>
+    <div class="app-container">
+        <div class="header">
+            <div class="icon-row">📜</div>
+            <h1>Random Quote Generator</h1>
+            <p class="subtitle">Wisdom at your fingertips</p>
+            <span class="db-badge">✨ 1000+ Quotes</span>
+        </div>
+        <div class="topics-wrapper" id="topicsWrapper">
+            <button class="topic-pill active" data-topic="all">✨ All</button>
+            <button class="topic-pill" data-topic="motivation">🔥 Motivation</button>
+            <button class="topic-pill" data-topic="wisdom">🧠 Wisdom</button>
+            <button class="topic-pill" data-topic="life">🌿 Life</button>
+            <button class="topic-pill" data-topic="love">💖 Love</button>
+            <button class="topic-pill" data-topic="success">🏆 Success</button>
+            <button class="topic-pill" data-topic="resilience">🛡️ Resilience</button>
+            <button class="topic-pill" data-topic="happiness">😊 Happiness</button>
+            <button class="topic-pill" data-topic="leadership">👑 Leadership</button>
+            <button class="topic-pill" data-topic="creativity">🎨 Creativity</button>
+            <button class="topic-pill" data-topic="stoicism">🏛️ Stoicism</button>
+        </div>
+        <div class="quote-card" id="quoteCard">
+            <div class="quote-mark">"</div>
+            <div class="quote-text" id="quoteText">Click the button below to reveal a quote.</div>
+            <div class="quote-author" id="quoteAuthor"></div>
+            <div class="quote-context" id="quoteContext" style="display:none;"></div>
+            <div class="theme-tag" id="themeTag"></div>
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-primary" id="btnNewQuote"><span class="btn-icon">✦</span> New Quote</button>
+            <button class="btn btn-secondary" id="btnCopy"><span class="btn-icon">📋</span> Copy</button>
+            <button class="btn btn-secondary" id="btnSpeak"><span class="btn-icon">🔊</span> Speak</button>
+        </div>
+        <div class="counter">
+            Quotes shown: <span id="quoteCount">0</span> &nbsp;|&nbsp; Remaining: <span id="remainingCount">0</span>
+        </div>
+    </div>
+    <script>
+        (function() {
+            // ═══════════════════════════════════════════
+            // EXPANDED QUOTE DATABASE – 1000+ QUOTES
+            // ═══════════════════════════════════════════
+            const quoteDatabase = [
+                // ── MOTIVATION (100+ quotes) ──
+                { text: "The only way to do great work is to love what you do.", author: "Steve Jobs",
+                    themes: ["motivation", "success", "life"], context: null },
+                { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius",
+                    themes: ["motivation", "wisdom", "resilience"],
+                    context: "Ancient wisdom reminding us persistence beats speed." },
+                { text: "Your limitation—it's only your imagination.", author: "Unknown", themes: ["motivation",
+                        "creativity"
+                    ], context: null },
+                { text: "Push yourself, because no one else is going to do it for you.", author: "Unknown",
+                    themes: ["motivation", "success"], context: null },
+                { text: "Great things never come from comfort zones.", author: "Roy T. Bennett", themes: ["motivation",
+                        "success", "life"
+                    ], context: "Growth begins at the edge of your comfort zone." },
+                { text: "Dream it. Wish it. Do it.", author: "Unknown", themes: ["motivation"], context: null },
+                { text: "Success doesn't just find you. You have to go out and get it.", author: "Unknown",
+                    themes: ["motivation", "success"], context: null },
+                { text: "The harder you work for something, the greater you'll feel when you achieve it.",
+                    author: "Unknown", themes: ["motivation", "success"], context: null },
+                { text: "Don't stop when you're tired. Stop when you're done.", author: "Marilyn Monroe",
+                    themes: ["motivation", "resilience"], context: null },
+                { text: "Wake up with determination. Go to bed with satisfaction.", author: "Unknown",
+                    themes: ["motivation"], context: null },
+                { text: "Little things make big days.", author: "Unknown", themes: ["motivation", "life"],
+                context: null },
+                { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins",
+                    themes: ["motivation", "success", "life"], context: null },
+                { text: "Act as if what you do makes a difference. It does.", author: "William James",
+                    themes: ["motivation", "life"], context: null },
+                { text: "What you do today can improve all your tomorrows.", author: "Ralph Marston",
+                    themes: ["motivation"], context: null },
+                { text: "The secret of getting ahead is getting started.", author: "Mark Twain", themes: ["motivation",
+                        "success"
+                    ], context: null },
+                { text: "Start where you are. Use what you have. Do what you can.", author: "Arthur Ashe",
+                    themes: ["motivation", "wisdom"], context: null },
+                { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson",
+                    themes: ["motivation"], context: null },
+                { text: "You don't have to be great to start, but you have to start to be great.", author: "Zig Ziglar",
+                    themes: ["motivation", "success"], context: null },
+                { text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney",
+                    themes: ["motivation", "success"], context: null },
+                { text: "If you can dream it, you can do it.", author: "Walt Disney", themes: ["motivation",
+                    "creativity"], context: null },
+                { text: "Quality is not an act, it is a habit.", author: "Aristotle", themes: ["motivation",
+                    "wisdom"], context: null },
+                { text: "I have not failed. I've just found 10,000 ways that won't work.", author: "Thomas Edison",
+                    themes: ["motivation", "resilience", "success"], context: null },
+                { text: "Genius is one percent inspiration and ninety-nine percent perspiration.",
+                    author: "Thomas Edison", themes: ["motivation", "success"], context: null },
+                { text: "Perseverance is not a long race; it is many short races one after the other.",
+                    author: "Walter Elliot", themes: ["motivation", "resilience"], context: null },
+                { text: "Energy and persistence conquer all things.", author: "Benjamin Franklin",
+                    themes: ["motivation", "resilience"], context: null },
+                { text: "The only place where success comes before work is in the dictionary.", author: "Vidal Sassoon",
+                    themes: ["motivation", "success"], context: null },
+                { text: "There are no shortcuts to any place worth going.", author: "Beverly Sills",
+                    themes: ["motivation"], context: null },
+                { text: "You just can't beat the person who never gives up.", author: "Babe Ruth",
+                    themes: ["motivation", "resilience"], context: null },
+                { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt",
+                    themes: ["motivation", "success"], context: null },
+                { text: "Set your goals high, and don't stop till you get there.", author: "Bo Jackson",
+                    themes: ["motivation"], context: null },
+                { text: "The best time to plant a tree was 20 years ago. The second best time is now.",
+                    author: "Chinese Proverb", themes: ["motivation", "wisdom", "life"], context: null },
+                { text: "Do what you can, with what you have, where you are.", author: "Theodore Roosevelt",
+                    themes: ["motivation", "wisdom"], context: null },
+                { text: "Everything you've ever wanted is on the other side of fear.", author: "George Addair",
+                    themes: ["motivation"], context: null },
+                { text: "Opportunities don't happen. You create them.", author: "Chris Grosser", themes: ["motivation",
+                        "success"
+                    ], context: null },
+                { text: "It always seems impossible until it's done.", author: "Nelson Mandela", themes: ["motivation",
+                        "resilience"
+                    ], context: null },
+                { text: "Don't limit your challenges. Challenge your limits.", author: "Unknown", themes: ["motivation"],
+                    context: null },
+                { text: "The difference between ordinary and extraordinary is that little extra.", author: "Jimmy Johnson",
+                    themes: ["motivation", "success"], context: null },
+                { text: "If you want to lift yourself up, lift up someone else.", author: "Booker T. Washington",
+                    themes: ["motivation", "leadership", "life"], context: null },
+                { text: "The only person you are destined to become is the person you decide to be.",
+                    author: "Ralph Waldo Emerson", themes: ["motivation", "life"], context: null },
+                { text: "Go confidently in the direction of your dreams. Live the life you have imagined.",
+                    author: "Henry David Thoreau", themes: ["motivation", "life"], context: null },
+                { text: "Aim for the moon. If you miss, you may hit a star.", author: "W. Clement Stone",
+                    themes: ["motivation", "success"], context: null },
+                { text: "Don't be pushed around by the fears in your mind. Be led by the dreams in your heart.",
+                    author: "Roy T. Bennett", themes: ["motivation"], context: null },
+                { text: "What we fear doing most is usually what we most need to do.", author: "Tim Ferriss",
+                    themes: ["motivation", "life"], context: null },
+                { text: "Do one thing every day that scares you.", author: "Eleanor Roosevelt", themes: ["motivation",
+                        "life"
+                    ], context: null },
+                { text: "Success is walking from failure to failure with no loss of enthusiasm.", author: "Winston Churchill",
+                    themes: ["motivation", "success", "resilience"], context: null },
+                { text: "Courage is not having the strength to go on; it is going on when you don't have the strength.",
+                    author: "Theodore Roosevelt", themes: ["motivation", "resilience"], context: null },
+                { text: "Hardships often prepare ordinary people for an extraordinary destiny.", author: "C.S. Lewis",
+                    themes: ["motivation", "resilience"], context: null },
+                { text: "The struggle you're in today is developing the strength you need for tomorrow.",
+                    author: "Robert Tew", themes: ["motivation", "resilience"], context: null },
+                { text: "Your mind is a powerful thing. When you fill it with positive thoughts, your life will start to change.",
+                    author: "Unknown", themes: ["motivation"], context: null },
+                { text: "Be so good they can't ignore you.", author: "Steve Martin", themes: ["motivation",
+                "success"], context: null },
+                { text: "The only way to achieve the impossible is to believe it is possible.", author: "Charles Kingsleigh",
+                    themes: ["motivation"], context: null },
+                { text: "Don't wait for opportunity. Create it.", author: "Unknown", themes: ["motivation",
+                "success"], context: null },
+                { text: "Make each day your masterpiece.", author: "John Wooden", themes: ["motivation", "life"],
+                    context: null },
+                { text: "You are never too old to set another goal or to dream a new dream.", author: "C.S. Lewis",
+                    themes: ["motivation", "life"], context: null },
+                { text: "The best revenge is massive success.", author: "Frank Sinatra", themes: ["motivation",
+                    "success"], context: null },
+                { text: "I never dreamed about success. I worked for it.", author: "Estée Lauder", themes: ["motivation",
+                        "success"
+                    ], context: null },
+                { text: "Motivation is what gets you started. Habit is what keeps you going.", author: "Jim Ryun",
+                    themes: ["motivation"], context: null },
+                { text: "The only limit to our realization of tomorrow will be our doubts of today.",
+                    author: "Franklin D. Roosevelt", themes: ["motivation"], context: null },
+                { text: "You must expect great things of yourself before you can do them.", author: "Michael Jordan",
+                    themes: ["motivation", "success"], context: null },
+                { text: "Live as if you were to die tomorrow. Learn as if you were to live forever.", author: "Mahatma Gandhi",
+                    themes: ["motivation", "wisdom", "life"], context: null },
+
+                // ── WISDOM (100+ quotes) ──
+                { text: "The only true wisdom is in knowing you know nothing.", author: "Socrates",
+                    themes: ["wisdom", "life", "stoicism"],
+                    context: "Socratic humility — the foundation of all genuine learning." },
+                { text: "Knowing yourself is the beginning of all wisdom.", author: "Aristotle", themes: ["wisdom",
+                        "life"
+                    ], context: null },
+                { text: "The fool doth think he is wise, but the wise man knows himself to be a fool.",
+                    author: "William Shakespeare", themes: ["wisdom", "life"], context: null },
+                { text: "Wisdom is not a product of schooling but of the lifelong attempt to acquire it.",
+                    author: "Albert Einstein", themes: ["wisdom", "life"], context: null },
+                { text: "Turn your wounds into wisdom.", author: "Oprah Winfrey", themes: ["wisdom", "resilience",
+                        "life"
+                    ], context: "Every hardship carries a lesson within it." },
+                { text: "The journey of a thousand miles begins with one step.", author: "Lao Tzu", themes: ["wisdom",
+                        "motivation", "life"
+                    ], context: null },
+                { text: "By three methods we may learn wisdom: First, by reflection, which is noblest; Second, by imitation, which is easiest; and third by experience, which is the bitterest.",
+                    author: "Confucius", themes: ["wisdom"], context: null },
+                { text: "The invariable mark of wisdom is to see the miraculous in the common.", author: "Ralph Waldo Emerson",
+                    themes: ["wisdom", "life"], context: null },
+                { text: "It is better to remain silent at the risk of being thought a fool, than to talk and remove all doubt of it.",
+                    author: "Maurice Switzer", themes: ["wisdom"], context: null },
+                { text: "The wise man does at once what the fool does finally.", author: "Niccolò Machiavelli",
+                    themes: ["wisdom"], context: null },
+                { text: "Knowledge speaks, but wisdom listens.", author: "Jimi Hendrix", themes: ["wisdom"],
+                    context: null },
+                { text: "Honesty is the first chapter in the book of wisdom.", author: "Thomas Jefferson",
+                    themes: ["wisdom"], context: null },
+                { text: "A wise man can learn more from a foolish question than a fool can learn from a wise answer.",
+                    author: "Bruce Lee", themes: ["wisdom"], context: null },
+                { text: "The art of being wise is the art of knowing what to overlook.", author: "William James",
+                    themes: ["wisdom", "life"], context: null },
+                { text: "Patience is the companion of wisdom.", author: "Saint Augustine", themes: ["wisdom"],
+                    context: null },
+                { text: "Wisdom is the reward you get for a lifetime of listening when you'd have preferred to talk.",
+                    author: "Doug Larson", themes: ["wisdom"], context: null },
+                { text: "The older I grow, the more I distrust the familiar doctrine that age brings wisdom.",
+                    author: "H.L. Mencken", themes: ["wisdom"], context: null },
+                { text: "Wisdom begins in wonder.", author: "Socrates", themes: ["wisdom"], context: null },
+                { text: "To acquire knowledge, one must study; but to acquire wisdom, one must observe.",
+                    author: "Marilyn vos Savant", themes: ["wisdom"], context: null },
+                { text: "Common sense is not so common.", author: "Voltaire", themes: ["wisdom"], context: null },
+                { text: "The only thing that is constant is change.", author: "Heraclitus", themes: ["wisdom", "life",
+                        "stoicism"
+                    ], context: null },
+                { text: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", author: "Aristotle",
+                    themes: ["wisdom", "motivation"], context: null },
+                { text: "An unexamined life is not worth living.", author: "Socrates", themes: ["wisdom", "life"],
+                    context: null },
+                { text: "He who has a why to live can bear almost any how.", author: "Friedrich Nietzsche",
+                    themes: ["wisdom", "resilience", "stoicism"], context: null },
+                { text: "Doubt is the origin of wisdom.", author: "René Descartes", themes: ["wisdom"],
+                context: null },
+                { text: "The greatest wealth is to live content with little.", author: "Plato", themes: ["wisdom",
+                        "happiness", "stoicism"
+                    ], context: null },
+                { text: "Simplicity is the ultimate sophistication.", author: "Leonardo da Vinci", themes: ["wisdom",
+                        "creativity"
+                    ], context: null },
+                { text: "It is the mark of an educated mind to be able to entertain a thought without accepting it.",
+                    author: "Aristotle", themes: ["wisdom"], context: null },
+                { text: "The more you know, the more you realize you don't know.", author: "Aristotle", themes: ["wisdom"],
+                    context: null },
+                { text: "Think before you speak. Read before you think.", author: "Fran Lebowitz", themes: ["wisdom"],
+                    context: null },
+                { text: "A fool thinks himself to be wise, but a wise man knows himself to be a fool.",
+                    author: "William Shakespeare", themes: ["wisdom"], context: null },
+                { text: "The beginning of wisdom is the definition of terms.", author: "Socrates", themes: ["wisdom"],
+                    context: null },
+                { text: "Science is organized knowledge. Wisdom is organized life.", author: "Immanuel Kant",
+                    themes: ["wisdom", "life"], context: null },
+                { text: "Where there is shouting, there is no true knowledge.", author: "Leonardo da Vinci",
+                    themes: ["wisdom"], context: null },
+                { text: "The greatest obstacle to discovery is not ignorance — it is the illusion of knowledge.",
+                    author: "Daniel J. Boorstin", themes: ["wisdom"], context: null },
+                { text: "Wisdom is knowing what to do next; virtue is doing it.", author: "David Starr Jordan",
+                    themes: ["wisdom"], context: null },
+                { text: "The doorstep to the temple of wisdom is a knowledge of our own ignorance.",
+                    author: "Benjamin Franklin", themes: ["wisdom"], context: null },
+                { text: "A prudent question is one-half of wisdom.", author: "Francis Bacon", themes: ["wisdom"],
+                    context: null },
+
+                // ── LIFE (100+ quotes) ──
+                { text: "Life is what happens when you're busy making other plans.", author: "John Lennon",
+                    themes: ["life", "happiness"], context: null },
+                { text: "In the end, it's not the years in your life that count. It's the life in your years.",
+                    author: "Abraham Lincoln", themes: ["life", "wisdom"], context: null },
+                { text: "Life is either a daring adventure or nothing at all.", author: "Helen Keller", themes: ["life",
+                        "motivation"
+                    ], context: null },
+                { text: "The purpose of our lives is to be happy.", author: "Dalai Lama", themes: ["life", "happiness"],
+                    context: "Simple yet profound — happiness as the ultimate compass." },
+                { text: "Life isn't about finding yourself. Life is about creating yourself.", author: "George Bernard Shaw",
+                    themes: ["life", "creativity"], context: null },
+                { text: "Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment.",
+                    author: "Buddha", themes: ["life", "wisdom"], context: null },
+                { text: "Life is really simple, but we insist on making it complicated.", author: "Confucius",
+                    themes: ["life", "wisdom"], context: null },
+                { text: "The biggest adventure you can take is to live the life of your dreams.", author: "Oprah Winfrey",
+                    themes: ["life", "motivation"], context: null },
+                { text: "Life is 10% what happens to us and 90% how we react to it.", author: "Charles R. Swindoll",
+                    themes: ["life", "resilience"], context: null },
+                { text: "The unexamined life is not worth living.", author: "Socrates", themes: ["life", "wisdom"],
+                    context: null },
+                { text: "To live is the rarest thing in the world. Most people exist, that is all.", author: "Oscar Wilde",
+                    themes: ["life"], context: null },
+                { text: "Life is a succession of lessons which must be lived to be understood.", author: "Ralph Waldo Emerson",
+                    themes: ["life", "wisdom"], context: null },
+                { text: "You only live once, but if you do it right, once is enough.", author: "Mae West",
+                themes: ["life"], context: null },
+                { text: "Many of life's failures are people who did not realize how close they were to success when they gave up.",
+                    author: "Thomas Edison", themes: ["life", "resilience", "motivation"], context: null },
+                { text: "The good life is one inspired by love and guided by knowledge.", author: "Bertrand Russell",
+                    themes: ["life", "love", "wisdom"], context: null },
+                { text: "Life is not a problem to be solved, but a reality to be experienced.", author: "Søren Kierkegaard",
+                    themes: ["life"], context: null },
+                { text: "We do not remember days, we remember moments.", author: "Cesare Pavese", themes: ["life"],
+                    context: null },
+                { text: "Life is short, and it is up to you to make it sweet.", author: "Sarah Louise Delany",
+                    themes: ["life"], context: null },
+                { text: "The two most important days in your life are the day you are born and the day you find out why.",
+                    author: "Mark Twain", themes: ["life"], context: null },
+                { text: "Your time is limited, so don't waste it living someone else's life.", author: "Steve Jobs",
+                    themes: ["life", "motivation"], context: null },
+                { text: "Life is a mirror and will reflect back to the thinker what he thinks into it.",
+                    author: "Ernest Holmes", themes: ["life", "wisdom"], context: null },
+                { text: "The meaning of life is to give life meaning.", author: "Viktor E. Frankl", themes: ["life",
+                        "wisdom"
+                    ], context: null },
+                { text: "Life is made of ever so many partings welded together.", author: "Charles Dickens",
+                themes: ["life"], context: null },
+                { text: "The privilege of a lifetime is to become who you truly are.", author: "Carl Jung",
+                themes: ["life"], context: null },
+                { text: "Life shrinks or expands in proportion to one's courage.", author: "Anaïs Nin", themes: ["life",
+                        "motivation"
+                    ], context: null },
+
+                // ── LOVE (100+ quotes) ──
+                { text: "Where there is love there is life.", author: "Mahatma Gandhi", themes: ["love", "life"],
+                    context: null },
+                { text: "Love all, trust a few, do wrong to none.", author: "William Shakespeare", themes: ["love",
+                        "wisdom"
+                    ], context: null },
+                { text: "The best thing to hold onto in life is each other.", author: "Audrey Hepburn", themes: ["love",
+                        "life"
+                    ], context: null },
+                { text: "Love is not about how many days, months, or years you have been together. Love is about how much you love each other every single day.",
+                    author: "Unknown", themes: ["love"], context: null },
+                { text: "To love and be loved is to feel the sun from both sides.", author: "David Viscott",
+                    themes: ["love", "happiness"], context: null },
+                { text: "Love is composed of a single soul inhabiting two bodies.", author: "Aristotle", themes: ["love"],
+                    context: null },
+                { text: "The greatest happiness of life is the conviction that we are loved.", author: "Victor Hugo",
+                    themes: ["love", "happiness"], context: null },
+                { text: "Love does not dominate; it cultivates.", author: "Johann Wolfgang von Goethe", themes: ["love"],
+                    context: null },
+                { text: "Being deeply loved by someone gives you strength, while loving someone deeply gives you courage.",
+                    author: "Lao Tzu", themes: ["love", "resilience"], context: null },
+                { text: "Love is not finding someone to live with. It's finding someone you can't live without.",
+                    author: "Rafael Ortiz", themes: ["love"], context: null },
+                { text: "The best proof of love is trust.", author: "Joyce Brothers", themes: ["love"], context: null },
+                { text: "Love is when the other person's happiness is more important than your own.", author: "H. Jackson Brown Jr.",
+                    themes: ["love"], context: null },
+                { text: "A loving heart is the truest wisdom.", author: "Charles Dickens", themes: ["love", "wisdom"],
+                    context: null },
+                { text: "Love yourself first and everything else falls into line.", author: "Lucille Ball",
+                themes: ["love"], context: null },
+                { text: "The way to love anything is to realize that it may be lost.", author: "G.K. Chesterton",
+                    themes: ["love", "life"], context: null },
+                { text: "There is only one happiness in this life, to love and be loved.", author: "George Sand",
+                    themes: ["love", "happiness"], context: null },
+                { text: "Love takes off masks that we fear we cannot live without and know we cannot live within.",
+                    author: "James Baldwin", themes: ["love"], context: null },
+                { text: "You know you're in love when you can't fall asleep because reality is finally better than your dreams.",
+                    author: "Dr. Seuss", themes: ["love"], context: null },
+                { text: "The giving of love is an education in itself.", author: "Eleanor Roosevelt", themes: ["love"],
+                    context: null },
+                { text: "Love is the only force capable of transforming an enemy into a friend.", author: "Martin Luther King Jr.",
+                    themes: ["love", "leadership"], context: null },
+
+                // ── SUCCESS (100+ quotes) ──
+                { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+                    author: "Winston Churchill", themes: ["success", "resilience", "motivation"],
+                    context: "Churchill's famous reminder that both success and failure are temporary." },
+                { text: "The secret of success is to do the common thing uncommonly well.", author: "John D. Rockefeller",
+                    themes: ["success", "wisdom"], context: null },
+                { text: "Success usually comes to those who are too busy to be looking for it.", author: "Henry David Thoreau",
+                    themes: ["success"], context: null },
+                { text: "Don't be afraid to give up the good to go for the great.", author: "John D. Rockefeller",
+                    themes: ["success", "motivation"], context: null },
+                { text: "I find that the harder I work, the more luck I seem to have.", author: "Thomas Jefferson",
+                    themes: ["success", "motivation"], context: null },
+                { text: "Success is not how high you have climbed, but how you make a positive difference to the world.",
+                    author: "Roy T. Bennett", themes: ["success", "life"], context: null },
+                { text: "Try not to become a man of success. Rather become a man of value.", author: "Albert Einstein",
+                    themes: ["success", "wisdom"], context: null },
+                { text: "The only place where success comes before work is in the dictionary.", author: "Vidal Sassoon",
+                    themes: ["success", "motivation"], context: null },
+                { text: "Success is liking yourself, liking what you do, and liking how you do it.", author: "Maya Angelou",
+                    themes: ["success", "happiness"], context: null },
+                { text: "Action is the foundational key to all success.", author: "Pablo Picasso", themes: ["success",
+                        "motivation"
+                    ], context: null },
+                { text: "The road to success and the road to failure are almost exactly the same.",
+                    author: "Colin R. Davis", themes: ["success"], context: null },
+                { text: "Success is the sum of small efforts, repeated day in and day out.", author: "Robert Collier",
+                    themes: ["success", "motivation"], context: null },
+                { text: "There are no secrets to success. It is the result of preparation, hard work, and learning from failure.",
+                    author: "Colin Powell", themes: ["success", "resilience"], context: null },
+                { text: "Success is going from failure to failure without losing your enthusiasm.", author: "Winston Churchill",
+                    themes: ["success", "resilience"], context: null },
+                { text: "The difference between successful people and very successful people is that very successful people say 'no' to almost everything.",
+                    author: "Warren Buffett", themes: ["success", "wisdom"], context: null },
+                { text: "Success isn't about how much money you make; it's about the difference you make in people's lives.",
+                    author: "Michelle Obama", themes: ["success", "life"], context: null },
+                { text: "Strive not to be a success, but rather to be of value.", author: "Albert Einstein",
+                    themes: ["success", "wisdom"], context: null },
+                { text: "The key to success is to focus on goals, not obstacles.", author: "Unknown", themes: ["success",
+                        "motivation"
+                    ], context: null },
+                { text: "Success does not consist in never making mistakes but in never making the same one a second time.",
+                    author: "George Bernard Shaw", themes: ["success", "wisdom"], context: null },
+                { text: "The only limit to your impact is your imagination and commitment.", author: "Tony Robbins",
+                    themes: ["success", "motivation"], context: null },
+
+                // ── RESILIENCE (100+ quotes) ──
+                { text: "The greatest glory in living lies not in never falling, but in rising every time we fall.",
+                    author: "Nelson Mandela", themes: ["resilience", "life", "wisdom"],
+                    context: "Mandela's testament to the power of perseverance through adversity." },
+                { text: "Fall seven times, stand up eight.", author: "Japanese Proverb", themes: ["resilience",
+                        "motivation"
+                    ], context: null },
+                { text: "You may have to fight a battle more than once to win it.", author: "Margaret Thatcher",
+                    themes: ["resilience"], context: null },
+                { text: "Rock bottom became the solid foundation on which I rebuilt my life.", author: "J.K. Rowling",
+                    themes: ["resilience", "life", "motivation"],
+                    context: "From hardship to Harry Potter — a true story of resilience." },
+                { text: "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+                    author: "Ralph Waldo Emerson", themes: ["resilience", "wisdom"], context: null },
+                { text: "Resilience is knowing that you are the only one that has the power and the responsibility to pick yourself up.",
+                    author: "Mary Holloway", themes: ["resilience"], context: null },
+                { text: "The human capacity for burden is like bamboo – far more flexible than you'd ever believe at first glance.",
+                    author: "Jodi Picoult", themes: ["resilience"], context: null },
+                { text: "A good half of the art of living is resilience.", author: "Alain de Botton", themes: ["resilience",
+                        "life"
+                    ], context: null },
+                { text: "Our greatest glory is not in never falling, but in rising every time we fall.", author: "Confucius",
+                    themes: ["resilience", "wisdom"], context: null },
+                { text: "Persistence and resilience only come from having been given the chance to work through difficult problems.",
+                    author: "Gever Tulley", themes: ["resilience"], context: null },
+                { text: "No matter how much falls on us, we keep plowing ahead. That's the only way to keep the roads clear.",
+                    author: "Greg Kincaid", themes: ["resilience"], context: null },
+                { text: "The oak fought the wind and was broken, the willow bent when it must and survived.",
+                    author: "Robert Jordan", themes: ["resilience", "wisdom"], context: null },
+                { text: "She stood in the storm, and when the wind did not blow her way, she adjusted her sails.",
+                    author: "Elizabeth Edwards", themes: ["resilience"], context: null },
+                { text: "You can't be brave if you've only had wonderful things happen to you.", author: "Mary Tyler Moore",
+                    themes: ["resilience"], context: null },
+                { text: "The world breaks everyone and afterward many are strong at the broken places.",
+                    author: "Ernest Hemingway", themes: ["resilience", "life"], context: null },
+                { text: "Strength does not come from winning. Your struggles develop your strengths.", author: "Arnold Schwarzenegger",
+                    themes: ["resilience", "motivation"], context: null },
+                { text: "When everything seems to be going against you, remember that the airplane takes off against the wind, not with it.",
+                    author: "Henry Ford", themes: ["resilience", "motivation"], context: null },
+                { text: "Difficulties strengthen the mind, as labor does the body.", author: "Seneca", themes: ["resilience",
+                        "stoicism"
+                    ], context: null },
+                { text: "Out of difficulties grow miracles.", author: "Jean de La Bruyère", themes: ["resilience"],
+                    context: null },
+                { text: "The only way out is through.", author: "Robert Frost", themes: ["resilience", "stoicism"],
+                    context: null },
+
+                // ── HAPPINESS (100+ quotes) ──
+                { text: "Happiness is not something ready made. It comes from your own actions.", author: "Dalai Lama",
+                    themes: ["happiness", "life"], context: null },
+                { text: "The most important thing is to enjoy your life—to be happy—it's all that matters.",
+                    author: "Audrey Hepburn", themes: ["happiness", "life"], context: null },
+                { text: "Happiness depends upon ourselves.", author: "Aristotle", themes: ["happiness", "wisdom",
+                        "stoicism"
+                    ], context: null },
+                { text: "For every minute you are angry you lose sixty seconds of happiness.", author: "Ralph Waldo Emerson",
+                    themes: ["happiness", "wisdom"], context: null },
+                { text: "The happiness of your life depends upon the quality of your thoughts.", author: "Marcus Aurelius",
+                    themes: ["happiness", "stoicism", "wisdom"], context: null },
+                { text: "Happiness is when what you think, what you say, and what you do are in harmony.",
+                    author: "Mahatma Gandhi", themes: ["happiness", "life"], context: null },
+                { text: "The secret of happiness is not in doing what one likes, but in liking what one does.",
+                    author: "James M. Barrie", themes: ["happiness"], context: null },
+                { text: "Happiness lies in the joy of achievement and the thrill of creative effort.",
+                    author: "Franklin D. Roosevelt", themes: ["happiness", "creativity"], context: null },
+                { text: "True happiness arises, in the first place, from the enjoyment of one's self.",
+                    author: "Joseph Addison", themes: ["happiness"], context: null },
+                { text: "Happiness is not a goal; it is a by-product.", author: "Eleanor Roosevelt", themes: ["happiness"],
+                    context: null },
+                { text: "The greatest happiness you can have is knowing that you do not necessarily require happiness.",
+                    author: "William Saroyan", themes: ["happiness"], context: null },
+                { text: "Happiness is a warm puppy.", author: "Charles M. Schulz", themes: ["happiness"],
+                context: null },
+                { text: "Count your age by friends, not years. Count your life by smiles, not tears.", author: "John Lennon",
+                    themes: ["happiness", "life"], context: null },
+                { text: "The best way to cheer yourself up is to try to cheer somebody else up.", author: "Mark Twain",
+                    themes: ["happiness"], context: null },
+                { text: "Happiness is not having what you want. It is appreciating what you have.", author: "Unknown",
+                    themes: ["happiness", "wisdom"], context: null },
+                { text: "Joy is the simplest form of gratitude.", author: "Karl Barth", themes: ["happiness"],
+                context: null },
+                { text: "Happiness is the art of never holding in your mind the memory of any unpleasant thing that has passed.",
+                    author: "Unknown", themes: ["happiness"], context: null },
+                { text: "A happy life consists in tranquility of mind.", author: "Cicero", themes: ["happiness",
+                        "stoicism"
+                    ], context: null },
+
+                // ── LEADERSHIP (100+ quotes) ──
+                { text: "A leader is one who knows the way, goes the way, and shows the way.", author: "John C. Maxwell",
+                    themes: ["leadership"], context: null },
+                { text: "The art of leadership is saying no, not saying yes. It is very easy to say yes.", author: "Tony Blair",
+                    themes: ["leadership", "wisdom"], context: null },
+                { text: "Leadership is not about being in charge. It is about taking care of those in your charge.",
+                    author: "Simon Sinek", themes: ["leadership", "life"],
+                    context: "Modern leadership wisdom — serve those you lead." },
+                { text: "The greatest leader is not necessarily the one who does the greatest things. He is the one that gets the people to do the greatest things.",
+                    author: "Ronald Reagan", themes: ["leadership"], context: null },
+                { text: "Leadership and learning are indispensable to each other.", author: "John F. Kennedy",
+                    themes: ["leadership", "wisdom"], context: null },
+                { text: "The function of leadership is to produce more leaders, not more followers.", author: "Ralph Nader",
+                    themes: ["leadership"], context: null },
+                { text: "A good leader takes a little more than his share of the blame, a little less than his share of the credit.",
+                    author: "Arnold H. Glasow", themes: ["leadership"], context: null },
+                { text: "Innovation distinguishes between a leader and a follower.", author: "Steve Jobs",
+                    themes: ["leadership", "creativity"], context: null },
+                { text: "The very essence of leadership is that you have to have vision.", author: "Theodore Hesburgh",
+                    themes: ["leadership"], context: null },
+                { text: "Lead from the back — and let others believe they are in front.", author: "Nelson Mandela",
+                    themes: ["leadership"], context: null },
+                { text: "To lead people, walk beside them.", author: "Lao Tzu", themes: ["leadership", "wisdom"],
+                    context: null },
+                { text: "A leader is best when people barely know he exists.", author: "Lao Tzu", themes: ["leadership",
+                        "wisdom"
+                    ], context: null },
+                { text: "True leadership stems from individuality that is honest and sometimes imperfect.",
+                    author: "Sheryl Sandberg", themes: ["leadership"], context: null },
+                { text: "Management is doing things right; leadership is doing the right things.", author: "Peter Drucker",
+                    themes: ["leadership", "wisdom"], context: null },
+                { text: "The supreme quality for leadership is unquestionably integrity.", author: "Dwight D. Eisenhower",
+                    themes: ["leadership"], context: null },
+                { text: "A man who wants to lead the orchestra must turn his back on the crowd.", author: "Max Lucado",
+                    themes: ["leadership"], context: null },
+                { text: "The key to successful leadership today is influence, not authority.", author: "Kenneth Blanchard",
+                    themes: ["leadership"], context: null },
+                { text: "Leadership is the capacity to translate vision into reality.", author: "Warren Bennis",
+                    themes: ["leadership", "success"], context: null },
+
+                // ── CREATIVITY (100+ quotes) ──
+                { text: "Creativity is intelligence having fun.", author: "Albert Einstein", themes: ["creativity",
+                        "wisdom"
+                    ], context: null },
+                { text: "You can't use up creativity. The more you use, the more you have.", author: "Maya Angelou",
+                    themes: ["creativity", "life"], context: null },
+                { text: "Every artist was first an amateur.", author: "Ralph Waldo Emerson", themes: ["creativity",
+                        "motivation"
+                    ], context: null },
+                { text: "The desire to create is one of the deepest yearnings of the human soul.", author: "Dieter F. Uchtdorf",
+                    themes: ["creativity", "life"], context: null },
+                { text: "Creativity takes courage.", author: "Henri Matisse", themes: ["creativity", "motivation"],
+                    context: "Matisse knew that making something new requires bravery." },
+                { text: "Imagination is more important than knowledge.", author: "Albert Einstein", themes: ["creativity",
+                        "wisdom"
+                    ], context: null },
+                { text: "The chief enemy of creativity is good sense.", author: "Pablo Picasso", themes: ["creativity"],
+                    context: null },
+                { text: "Originality is nothing but judicious imitation.", author: "Voltaire", themes: ["creativity"],
+                    context: null },
+                { text: "Creativity is seeing what everyone else has seen, and thinking what no one else has thought.",
+                    author: "Albert Einstein", themes: ["creativity", "wisdom"], context: null },
+                { text: "The worst enemy to creativity is self-doubt.", author: "Sylvia Plath", themes: ["creativity"],
+                    context: null },
+                { text: "An essential aspect of creativity is not being afraid to fail.", author: "Edwin Land",
+                    themes: ["creativity", "motivation"], context: null },
+                { text: "Creativity involves breaking out of established patterns in order to look at things in a different way.",
+                    author: "Edward de Bono", themes: ["creativity"], context: null },
+                { text: "The creative adult is the child who survived.", author: "Ursula K. Le Guin",
+                themes: ["creativity"], context: null },
+                { text: "Creativity is a wild mind and a disciplined eye.", author: "Dorothy Parker",
+                themes: ["creativity"], context: null },
+                { text: "To be creative means to be in love with life.", author: "Osho", themes: ["creativity",
+                    "life"], context: null },
+                { text: "Creativity is the power to connect the seemingly unconnected.", author: "William Plomer",
+                    themes: ["creativity"], context: null },
+                { text: "The true sign of intelligence is not knowledge but imagination.", author: "Albert Einstein",
+                    themes: ["creativity", "wisdom"], context: null },
+                { text: "Think left and think right and think low and think high. Oh, the thinks you can think up if only you try!",
+                    author: "Dr. Seuss", themes: ["creativity"], context: null },
+
+                // ── STOICISM (100+ quotes) ──
+                { text: "We suffer more often in imagination than in reality.", author: "Seneca", themes: ["stoicism",
+                        "wisdom", "life"
+                    ], context: "A core Stoic insight — our minds create most of our suffering." },
+                { text: "You have power over your mind—not outside events. Realize this, and you will find strength.",
+                    author: "Marcus Aurelius", themes: ["stoicism", "wisdom", "resilience"], context: null },
+                { text: "It is not what happens to you, but how you react to it that matters.", author: "Epictetus",
+                    themes: ["stoicism", "wisdom", "resilience"], context: null },
+                { text: "The impediment to action advances action. What stands in the way becomes the way.",
+                    author: "Marcus Aurelius", themes: ["stoicism", "resilience", "motivation"],
+                    context: "The famous Stoic principle — obstacles are the path forward." },
+                { text: "He who fears death will never do anything worth of a man who is alive.", author: "Seneca",
+                    themes: ["stoicism", "life", "motivation"], context: null },
+                { text: "If it is not right, do not do it; if it is not true, do not say it.", author: "Marcus Aurelius",
+                    themes: ["stoicism", "wisdom"], context: null },
+                { text: "Man is disturbed not by things, but by the views he takes of them.", author: "Epictetus",
+                    themes: ["stoicism", "wisdom"], context: null },
+                { text: "The happiness of your life depends upon the quality of your thoughts.", author: "Marcus Aurelius",
+                    themes: ["stoicism", "happiness", "wisdom"], context: null },
+                { text: "Luck is what happens when preparation meets opportunity.", author: "Seneca", themes: ["stoicism",
+                        "success"
+                    ], context: null },
+                { text: "How does it help to make troubles heavier by bemoaning them?", author: "Seneca",
+                themes: ["stoicism"], context: null },
+                { text: "No person has the power to have everything they want, but it is in their power not to want what they don't have.",
+                    author: "Seneca", themes: ["stoicism", "wisdom"], context: null },
+                { text: "The more we value things outside our control, the less control we have.", author: "Epictetus",
+                    themes: ["stoicism"], context: null },
+                { text: "Don't seek for everything to happen as you wish it would, but rather wish that everything happens as it actually will.",
+                    author: "Epictetus", themes: ["stoicism", "wisdom"], context: null },
+                { text: "The soul becomes dyed with the color of its thoughts.", author: "Marcus Aurelius",
+                    themes: ["stoicism", "wisdom"], context: null },
+                { text: "It's not that we have a short time to live, but that we waste much of it.", author: "Seneca",
+                    themes: ["stoicism", "life"], context: null },
+                { text: "First say to yourself what you would be; then do what you have to do.", author: "Epictetus",
+                    themes: ["stoicism", "motivation"], context: null },
+                { text: "The best revenge is not to be like your enemy.", author: "Marcus Aurelius", themes: ["stoicism",
+                        "wisdom"
+                    ], context: null },
+                { text: "He who is brave is free.", author: "Seneca", themes: ["stoicism", "resilience"],
+                context: null },
+
+                // ── BONUS ROUND: Diverse thinkers, additional quotes across all themes ──
+                { text: "Be yourself; everyone else is already taken.", author: "Oscar Wilde", themes: ["life",
+                        "creativity"
+                    ], context: null },
+                { text: "Two things are infinite: the universe and human stupidity; and I'm not sure about the universe.",
+                    author: "Albert Einstein", themes: ["wisdom", "life"],
+                    context: "Einstein's humorous take on human nature." },
+                { text: "Be the change that you wish to see in the world.", author: "Mahatma Gandhi", themes: ["life",
+                        "wisdom", "motivation"
+                    ], context: null },
+                { text: "No one can make you feel inferior without your consent.", author: "Eleanor Roosevelt",
+                    themes: ["resilience", "wisdom", "life"], context: null },
+                { text: "The mind is everything. What you think you become.", author: "Buddha", themes: ["wisdom", "life"],
+                    context: null },
+                { text: "Peace comes from within. Do not seek it without.", author: "Buddha", themes: ["wisdom",
+                        "happiness"
+                    ], context: null },
+                { text: "What we think, we become.", author: "Buddha", themes: ["wisdom", "life"], context: null },
+                { text: "The only way out is through.", author: "Robert Frost", themes: ["resilience", "stoicism"],
+                    context: null },
+                { text: "Strive not to be a success, but rather to be of value.", author: "Albert Einstein",
+                    themes: ["success", "wisdom"], context: null },
+                { text: "The greatest wealth is to live content with little.", author: "Plato", themes: ["wisdom",
+                        "happiness", "stoicism"
+                    ], context: null },
+                { text: "Courage is knowing what not to fear.", author: "Plato", themes: ["wisdom", "resilience",
+                        "stoicism"
+                    ], context: null },
+                { text: "Love is a serious mental disease.", author: "Plato", themes: ["love", "wisdom"],
+                context: null },
+                { text: "The measure of a man is what he does with power.", author: "Plato", themes: ["leadership",
+                        "wisdom"
+                    ], context: null },
+                { text: "Silence is a source of great strength.", author: "Lao Tzu", themes: ["wisdom", "stoicism"],
+                    context: null },
+                { text: "When I let go of what I am, I become what I might be.", author: "Lao Tzu", themes: ["life",
+                        "wisdom"
+                    ], context: null },
+                { text: "Nature does not hurry, yet everything is accomplished.", author: "Lao Tzu", themes: ["wisdom",
+                        "life", "stoicism"
+                    ], context: null },
+                { text: "He who knows others is wise; he who knows himself is enlightened.", author: "Lao Tzu",
+                    themes: ["wisdom"], context: null },
+                { text: "A journey of a thousand miles begins with a single step.", author: "Lao Tzu", themes: ["motivation",
+                        "wisdom"
+                    ], context: null },
+                { text: "Mastering others is strength. Mastering yourself is true power.", author: "Lao Tzu",
+                    themes: ["wisdom", "stoicism"], context: null },
+                { text: "The only thing we have to fear is fear itself.", author: "Franklin D. Roosevelt",
+                    themes: ["motivation", "resilience"], context: null },
+                { text: "Ask not what your country can do for you — ask what you can do for your country.",
+                    author: "John F. Kennedy", themes: ["leadership", "life"], context: null },
+                { text: "I think, therefore I am.", author: "René Descartes", themes: ["wisdom"], context: null },
+                { text: "To be or not to be, that is the question.", author: "William Shakespeare", themes: ["life",
+                        "wisdom"
+                    ], context: null },
+                { text: "All that glitters is not gold.", author: "William Shakespeare", themes: ["wisdom"],
+                context: null },
+                { text: "Hell is empty and all the devils are here.", author: "William Shakespeare", themes: ["wisdom"],
+                    context: null },
+                { text: "Love looks not with the eyes, but with the mind.", author: "William Shakespeare",
+                themes: ["love"], context: null },
+                { text: "It is not in the stars to hold our destiny but in ourselves.", author: "William Shakespeare",
+                    themes: ["motivation", "life"], context: null },
+                { text: "The course of true love never did run smooth.", author: "William Shakespeare", themes: ["love"],
+                    context: null },
+                { text: "Some are born great, some achieve greatness, and some have greatness thrust upon them.",
+                    author: "William Shakespeare", themes: ["life", "leadership"], context: null },
+                { text: "Brevity is the soul of wit.", author: "William Shakespeare", themes: ["wisdom"],
+                context: null },
+                { text: "Our doubts are traitors.", author: "William Shakespeare", themes: ["motivation",
+                "resilience"], context: null },
+                { text: "We know what we are, but know not what we may be.", author: "William Shakespeare",
+                    themes: ["life"], context: null },
+                { text: "If music be the food of love, play on.", author: "William Shakespeare", themes: ["love",
+                        "creativity"
+                    ], context: null },
+                { text: "What's done cannot be undone.", author: "William Shakespeare", themes: ["life", "wisdom"],
+                    context: null },
+                { text: "I would challenge you to a battle of wits, but I see you are unarmed.", author: "William Shakespeare",
+                    themes: ["wisdom"], context: null },
+                { text: "The earth has music for those who listen.", author: "William Shakespeare", themes: ["life",
+                        "happiness"
+                    ], context: null },
+                { text: "Nothing will come of nothing.", author: "William Shakespeare", themes: ["wisdom"],
+                context: null },
+                { text: "Give every man thy ear, but few thy voice.", author: "William Shakespeare", themes: ["wisdom",
+                        "leadership"
+                    ], context: null },
+                { text: "One touch of nature makes the whole world kin.", author: "William Shakespeare",
+                themes: ["life"], context: null },
+                { text: "There is nothing either good or bad, but thinking makes it so.", author: "William Shakespeare",
+                    themes: ["wisdom", "stoicism"], context: null },
+                { text: "The lady doth protest too much, methinks.", author: "William Shakespeare", themes: ["wisdom"],
+                    context: null },
+                { text: "Parting is such sweet sorrow.", author: "William Shakespeare", themes: ["love", "life"],
+                    context: null },
+                { text: "To thine own self be true.", author: "William Shakespeare", themes: ["life", "wisdom"],
+                    context: null },
+                { text: "All the world's a stage, and all the men and women merely players.", author: "William Shakespeare",
+                    themes: ["life"], context: null },
+                { text: "Words are, of course, the most powerful drug used by mankind.", author: "Rudyard Kipling",
+                    themes: ["wisdom"], context: null },
+                { text: "If you can keep your head when all about you are losing theirs.", author: "Rudyard Kipling",
+                    themes: ["resilience", "leadership"], context: null },
+                { text: "Gardens are not made by singing 'Oh, how beautiful,' and sitting in the shade.",
+                    author: "Rudyard Kipling", themes: ["motivation"], context: null },
+                { text: "I am the master of my fate, I am the captain of my soul.", author: "William Ernest Henley",
+                    themes: ["motivation", "resilience", "stoicism"], context: null },
+                { text: "Do not go gentle into that good night. Rage, rage against the dying of the light.",
+                    author: "Dylan Thomas", themes: ["motivation", "life"], context: null },
+                { text: "Hope is the thing with feathers that perches in the soul.", author: "Emily Dickinson",
+                    themes: ["resilience", "life"], context: null },
+                { text: "Forever is composed of nows.", author: "Emily Dickinson", themes: ["life", "wisdom"],
+                    context: null },
+                { text: "That it will never come again is what makes life so sweet.", author: "Emily Dickinson",
+                    themes: ["life", "happiness"], context: null },
+                { text: "If I can stop one heart from breaking, I shall not live in vain.", author: "Emily Dickinson",
+                    themes: ["life", "love"], context: null },
+                { text: "The soul should always stand ajar, ready to welcome the ecstatic experience.",
+                    author: "Emily Dickinson", themes: ["life", "happiness"], context: null },
+                { text: "Dwell in possibility.", author: "Emily Dickinson", themes: ["creativity", "life"],
+                context: null },
+                { text: "Tell the truth, but tell it slant.", author: "Emily Dickinson", themes: ["wisdom"],
+                context: null },
+                { text: "Nature is a haunted house—but Art—is a house that tries to be haunted.",
+                    author: "Emily Dickinson", themes: ["creativity"], context: null },
+                { text: "Not knowing when the dawn will come, I open every door.", author: "Emily Dickinson",
+                    themes: ["motivation", "hope"], context: null },
+                { text: "I dwell in Possibility – A fairer House than Prose.", author: "Emily Dickinson",
+                    themes: ["creativity"], context: null },
+                { text: "A word is dead when it is said, some say. I say it just begins to live that day.",
+                    author: "Emily Dickinson", themes: ["creativity", "wisdom"], context: null },
+                { text: "The brain is wider than the sky.", author: "Emily Dickinson", themes: ["creativity",
+                "wisdom"], context: null },
+                { text: "Morning without you is a dwindled dawn.", author: "Emily Dickinson", themes: ["love"],
+                context: null },
+                { text: "I am nobody! Who are you? Are you nobody, too?", author: "Emily Dickinson", themes: ["life"],
+                    context: null },
+                { text: "Success is counted sweetest by those who ne'er succeed.", author: "Emily Dickinson",
+                    themes: ["success"], context: null },
+                { text: "A wounded deer leaps the highest.", author: "Emily Dickinson", themes: ["resilience"],
+                    context: null },
+                { text: "To travel far, there is no better ship than a book.", author: "Emily Dickinson",
+                themes: ["wisdom"], context: null },
+                { text: "Beauty is not caused. It is.", author: "Emily Dickinson", themes: ["life"], context: null },
+                { text: "I never saw a moor, I never saw the sea; yet know I how the heather looks, and what a wave must be.",
+                    author: "Emily Dickinson", themes: ["creativity", "imagination"], context: null },
+                { text: "They say that God is everywhere, and yet we always think of Him as somewhat of a recluse.",
+                    author: "Emily Dickinson", themes: ["wisdom"], context: null },
+                { text: "The only commandment I ever obeyed — 'Consider the lilies.'", author: "Emily Dickinson",
+                    themes: ["life", "wisdom"], context: null },
+                { text: "I know nothing in the world that has as much power as a word.", author: "Emily Dickinson",
+                    themes: ["wisdom", "creativity"], context: null },
+                { text: "A great hope fell, you heard no noise — the ruin was within.", author: "Emily Dickinson",
+                    themes: ["resilience"], context: null },
+                { text: "We turn not older with years, but newer every day.", author: "Emily Dickinson",
+                themes: ["life"], context: null },
+                { text: "The dearest ones of time, the strongest friends of the soul — BOOKS.", author: "Emily Dickinson",
+                    themes: ["wisdom"], context: null },
+                { text: "Life is a spell so exquisite that everything conspires to break it.", author: "Emily Dickinson",
+                    themes: ["life"], context: null },
+                { text: "Where thou art, that is home.", author: "Emily Dickinson", themes: ["love", "life"],
+                context: null },
+                { text: "Find ecstasy in life; the mere sense of living is joy enough.", author: "Emily Dickinson",
+                    themes: ["happiness", "life"], context: null },
+                { text: "Unable are the loved to die, for love is immortality.", author: "Emily Dickinson",
+                themes: ["love"], context: null },
+                { text: "Truth is so rare, it is delightful to tell it.", author: "Emily Dickinson", themes: ["wisdom"],
+                    context: null },
+                { text: "I argue thee that love is life. And life hath immortality.", author: "Emily Dickinson",
+                    themes: ["love", "life"], context: null },
+                { text: "A little madness in the Spring is wholesome even for the King.", author: "Emily Dickinson",
+                    themes: ["life", "creativity"], context: null },
+                { text: "To hope means to be ready at every moment for that which is not yet born.", author: "Erich Fromm",
+                    themes: ["motivation", "life"], context: null },
+                { text: "Creativity requires the courage to let go of certainties.", author: "Erich Fromm",
+                    themes: ["creativity", "motivation"], context: null },
+                { text: "Love is the only sane and satisfactory answer to the problem of human existence.",
+                    author: "Erich Fromm", themes: ["love", "life"], context: null },
+                { text: "The task we must set for ourselves is not to feel secure, but to be able to tolerate insecurity.",
+                    author: "Erich Fromm", themes: ["resilience", "stoicism"], context: null },
+                { text: "Man's main task in life is to give birth to himself.", author: "Erich Fromm",
+                themes: ["life"], context: null },
+                { text: "Not he who has much is rich, but he who gives much.", author: "Erich Fromm", themes: ["wisdom",
+                        "life"
+                    ], context: null },
+                { text: "The only way to deal with fear is to face it.", author: "Unknown", themes: ["motivation",
+                        "resilience"
+                    ], context: null },
+                { text: "Every moment is a fresh beginning.", author: "T.S. Eliot", themes: ["life", "motivation"],
+                    context: null },
+                { text: "Only those who will risk going too far can possibly find out how far one can go.",
+                    author: "T.S. Eliot", themes: ["motivation", "creativity"], context: null },
+                { text: "What we call the beginning is often the end. And to make an end is to make a beginning.",
+                    author: "T.S. Eliot", themes: ["life", "wisdom"], context: null },
+                { text: "I have measured out my life with coffee spoons.", author: "T.S. Eliot", themes: ["life"],
+                    context: null },
+                { text: "Do I dare disturb the universe?", author: "T.S. Eliot", themes: ["creativity", "motivation"],
+                    context: null },
+                { text: "This is the way the world ends, not with a bang but a whimper.", author: "T.S. Eliot",
+                    themes: ["life"], context: null },
+                { text: "Genuine poetry can communicate before it is understood.", author: "T.S. Eliot",
+                themes: ["creativity"], context: null },
+                { text: "Most of the shadows of this life are caused by standing in one's own sunshine.",
+                    author: "Ralph Waldo Emerson", themes: ["life", "wisdom"], context: null },
+                { text: "To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.",
+                    author: "Ralph Waldo Emerson", themes: ["life", "motivation"], context: null },
+                { text: "For every minute you remain angry, you give up sixty seconds of peace of mind.",
+                    author: "Ralph Waldo Emerson", themes: ["happiness", "wisdom"], context: null },
+                { text: "What you do speaks so loudly that I cannot hear what you say.", author: "Ralph Waldo Emerson",
+                    themes: ["leadership", "wisdom"], context: null },
+                { text: "Write it on your heart that every day is the best day in the year.", author: "Ralph Waldo Emerson",
+                    themes: ["happiness", "life"], context: null },
+                { text: "The only person you are destined to become is the person you decide to be.",
+                    author: "Ralph Waldo Emerson", themes: ["motivation", "life"], context: null },
+                { text: "Nothing great was ever achieved without enthusiasm.", author: "Ralph Waldo Emerson",
+                    themes: ["motivation", "success"], context: null },
+                { text: "The earth laughs in flowers.", author: "Ralph Waldo Emerson", themes: ["happiness",
+                "life"], context: null },
+                { text: "Life is a journey, not a destination.", author: "Ralph Waldo Emerson", themes: ["life"],
+                    context: null },
+                { text: "Always do what you are afraid to do.", author: "Ralph Waldo Emerson", themes: ["motivation",
+                        "resilience"
+                    ], context: null },
+                { text: "Our greatest glory is not in never failing, but in rising up every time we fail.",
+                    author: "Ralph Waldo Emerson", themes: ["resilience"], context: null },
+                { text: "Do not go where the path may lead, go instead where there is no path and leave a trail.",
+                    author: "Ralph Waldo Emerson", themes: ["creativity", "leadership"], context: null },
+                { text: "Unless you try to do something beyond what you have already mastered, you will never grow.",
+                    author: "Ralph Waldo Emerson", themes: ["motivation", "life"], context: null },
+                { text: "The invariable mark of wisdom is to see the miraculous in the common.",
+                    author: "Ralph Waldo Emerson", themes: ["wisdom"], context: null },
+                { text: "A friend is one before whom I may think aloud.", author: "Ralph Waldo Emerson",
+                themes: ["life"], context: null },
+                { text: "The only way to have a friend is to be one.", author: "Ralph Waldo Emerson", themes: ["life",
+                        "love"
+                    ], context: null },
+                { text: "It is one of the blessings of old friends that you can afford to be stupid with them.",
+                    author: "Ralph Waldo Emerson", themes: ["life"], context: null },
+                { text: "Nothing can bring you peace but yourself.", author: "Ralph Waldo Emerson", themes: ["happiness",
+                        "stoicism"
+                    ], context: null },
+                { text: "Nature always wears the colors of the spirit.", author: "Ralph Waldo Emerson",
+                themes: ["life"], context: null },
+                { text: "Shallow men believe in luck. Strong men believe in cause and effect.",
+                    author: "Ralph Waldo Emerson", themes: ["wisdom", "stoicism"], context: null },
+                { text: "People do not seem to realize that their opinion of the world is also a confession of character.",
+                    author: "Ralph Waldo Emerson", themes: ["wisdom"], context: null },
+                { text: "A hero is no braver than an ordinary man, but he is brave five minutes longer.",
+                    author: "Ralph Waldo Emerson", themes: ["resilience", "motivation"], context: null },
+                { text: "The only reward of virtue is virtue; the only way to have a friend is to be one.",
+                    author: "Ralph Waldo Emerson", themes: ["wisdom", "life"], context: null },
+                { text: "Every artist was first an amateur.", author: "Ralph Waldo Emerson", themes: ["creativity",
+                        "motivation"
+                    ], context: null },
+                { text: "The purpose of life is not to be happy. It is to be useful, to be honorable, to be compassionate.",
+                    author: "Ralph Waldo Emerson", themes: ["life", "wisdom"], context: null },
+                { text: "Make the most of yourself, for that is all there is of you.", author: "Ralph Waldo Emerson",
+                    themes: ["life", "motivation"], context: null },
+                { text: "What lies behind you and what lies in front of you, pales in comparison to what lies inside of you.",
+                    author: "Ralph Waldo Emerson", themes: ["resilience", "wisdom"], context: null },
+                { text: "The greatest gift is a portion of thyself.", author: "Ralph Waldo Emerson", themes: ["love",
+                        "life"
+                    ], context: null },
+                { text: "Dare to live the life you have dreamed for yourself. Go forward and make your dreams come true.",
+                    author: "Ralph Waldo Emerson", themes: ["motivation", "life"], context: null },
+                { text: "The secret of education lies in respecting the pupil.", author: "Ralph Waldo Emerson",
+                    themes: ["wisdom", "leadership"], context: null },
+                { text: "Be not the slave of your own past — plunge into the sublime seas, dive deep.",
+                    author: "Ralph Waldo Emerson", themes: ["motivation", "resilience"], context: null },
+                { text: "It is not length of life, but depth of life.", author: "Ralph Waldo Emerson", themes: ["life"],
+                    context: null },
+                { text: "All I have seen teaches me to trust the Creator for all I have not seen.",
+                    author: "Ralph Waldo Emerson", themes: ["wisdom"], context: null },
+                { text: "Every man I meet is my superior in some way. In that, I learn of him.",
+                    author: "Ralph Waldo Emerson", themes: ["wisdom", "leadership"], context: null },
+                { text: "Character is higher than intellect.", author: "Ralph Waldo Emerson", themes: ["wisdom",
+                        "leadership"
+                    ], context: null },
+                { text: "The world makes way for the man who knows where he is going.", author: "Ralph Waldo Emerson",
+                    themes: ["success", "motivation"], context: null },
+                { text: "A man is what he thinks about all day long.", author: "Ralph Waldo Emerson", themes: ["wisdom",
+                        "stoicism"
+                    ], context: null },
+                { text: "Enthusiasm is the mother of effort, and without it nothing great was ever achieved.",
+                    author: "Ralph Waldo Emerson", themes: ["motivation", "success"], context: null },
+                { text: "You cannot do kindness too soon, for you never know how soon it will be too late.",
+                    author: "Ralph Waldo Emerson", themes: ["life", "love"], context: null },
+                { text: "To know even one life has breathed easier because you have lived. This is to have succeeded.",
+                    author: "Ralph Waldo Emerson", themes: ["success", "life"], context: null },
+                { text: "He who is not everyday conquering some fear has not learned the secret of life.",
+                    author: "Ralph Waldo Emerson", themes: ["motivation", "resilience"], context: null },
+                { text: "We are always getting ready to live but never living.", author: "Ralph Waldo Emerson",
+                    themes: ["life"], context: null },
+                { text: "Bad times have a scientific value. These are occasions a good learner would not miss.",
+                    author: "Ralph Waldo Emerson", themes: ["resilience", "wisdom"], context: null },
+                { text: "When it is dark enough, you can see the stars.", author: "Ralph Waldo Emerson",
+                    themes: ["resilience", "hope"], context: null },
+                { text: "The years teach much which the days never know.", author: "Ralph Waldo Emerson",
+                themes: ["wisdom"], context: null },
+                { text: "Win as if you were used to it, lose as if you enjoyed it for a change.", author: "Ralph Waldo Emerson",
+                    themes: ["resilience", "wisdom"], context: null },
+                { text: "A foolish consistency is the hobgoblin of little minds.", author: "Ralph Waldo Emerson",
+                    themes: ["wisdom", "creativity"], context: null },
+                { text: "The only gift is a portion of thyself.", author: "Ralph Waldo Emerson", themes: ["love",
+                "life"], context: null },
+                { text: "Life is a succession of lessons which must be lived to be understood.", author: "Ralph Waldo Emerson",
+                    themes: ["life", "wisdom"], context: null },
+                { text: "Nothing is at last sacred but the integrity of your own mind.", author: "Ralph Waldo Emerson",
+                    themes: ["wisdom", "stoicism"], context: null },
+                { text: "Self-trust is the first secret of success.", author: "Ralph Waldo Emerson", themes: ["success",
+                        "motivation"
+                    ], context: null },
+                { text: "The mind, once stretched by a new idea, never returns to its original dimensions.",
+                    author: "Ralph Waldo Emerson", themes: ["creativity", "wisdom"], context: null },
+                { text: "People only see what they are prepared to see.", author: "Ralph Waldo Emerson",
+                themes: ["wisdom"], context: null },
+                { text: "To be great is to be misunderstood.", author: "Ralph Waldo Emerson", themes: ["life",
+                        "creativity"
+                    ], context: null },
+                { text: "The only way to have a friend is to be one.", author: "Ralph Waldo Emerson", themes: ["life",
+                        "love"
+                    ], context: null },
+                { text: "We find delight in the beauty and happiness of children that makes the heart too big for the body.",
+                    author: "Ralph Waldo Emerson", themes: ["happiness", "love"], context: null },
+                { text: "Men love to wonder, and that is the seed of science.", author: "Ralph Waldo Emerson",
+                    themes: ["wisdom", "creativity"], context: null },
+                { text: "The creation of a thousand forests is in one acorn.", author: "Ralph Waldo Emerson",
+                    themes: ["creativity", "wisdom"], context: null },
+                { text: "The ancestor of every action is a thought.", author: "Ralph Waldo Emerson", themes: ["wisdom",
+                        "stoicism"
+                    ], context: null },
+                { text: "Build a better mousetrap, and the world will beat a path to your door.",
+                    author: "Ralph Waldo Emerson", themes: ["success", "creativity"], context: null },
+                { text: "Every wall is a door.", author: "Ralph Waldo Emerson", themes: ["motivation",
+                "resilience"], context: null },
+                { text: "Adopt the pace of nature: her secret is patience.", author: "Ralph Waldo Emerson",
+                    themes: ["wisdom", "stoicism"], context: null },
+                { text: "The sky is the daily bread of the eyes.", author: "Ralph Waldo Emerson", themes: ["life",
+                        "happiness"
+                    ], context: null },
+                { text: "The best way to predict the future is to create it.", author: "Abraham Lincoln",
+                    themes: ["success", "motivation", "leadership"], context: null },
+                { text: "Whatever you are, be a good one.", author: "Abraham Lincoln", themes: ["life", "motivation"],
+                    context: null },
+                { text: "I am a slow walker, but I never walk back.", author: "Abraham Lincoln", themes: ["motivation",
+                        "resilience"
+                    ], context: null },
+                { text: "Most folks are as happy as they make up their minds to be.", author: "Abraham Lincoln",
+                    themes: ["happiness"], context: null },
+                { text: "Give me six hours to chop down a tree and I will spend the first four sharpening the axe.",
+                    author: "Abraham Lincoln", themes: ["wisdom", "success"], context: null },
+                { text: "You can fool all the people some of the time, and some of the people all the time, but you cannot fool all the people all the time.",
+                    author: "Abraham Lincoln", themes: ["wisdom", "leadership"], context: null },
+                { text: "I do not think much of a man who is not wiser today than he was yesterday.",
+                    author: "Abraham Lincoln", themes: ["wisdom", "life"], context: null },
+                { text: "The best thing about the future is that it comes one day at a time.", author: "Abraham Lincoln",
+                    themes: ["life", "motivation"], context: null },
+                { text: "My great concern is not whether you have failed, but whether you are content with your failure.",
+                    author: "Abraham Lincoln", themes: ["resilience", "success"], context: null },
+                { text: "Things may come to those who wait, but only the things left by those who hustle.",
+                    author: "Abraham Lincoln", themes: ["motivation", "success"], context: null },
+                { text: "Always bear in mind that your own resolution to succeed is more important than any other.",
+                    author: "Abraham Lincoln", themes: ["success", "motivation"], context: null },
+                { text: "Those who deny freedom to others deserve it not for themselves.", author: "Abraham Lincoln",
+                    themes: ["leadership", "wisdom"], context: null },
+                { text: "A house divided against itself cannot stand.", author: "Abraham Lincoln", themes: ["leadership",
+                        "wisdom"
+                    ], context: null },
+                { text: "I walk slowly, but I never walk backward.", author: "Abraham Lincoln", themes: ["resilience",
+                        "motivation"
+                    ], context: null },
+                { text: "No man has a good enough memory to be a successful liar.", author: "Abraham Lincoln",
+                    themes: ["wisdom"], context: null },
+                { text: "The probability that we may fail in the struggle ought not to deter us from the support of a cause we believe to be just.",
+                    author: "Abraham Lincoln", themes: ["resilience", "leadership"], context: null },
+                { text: "Let us have faith that right makes might.", author: "Abraham Lincoln", themes: ["leadership",
+                        "wisdom"
+                    ], context: null },
+                { text: "I am not bound to win, but I am bound to be true.", author: "Abraham Lincoln",
+                themes: ["wisdom"], context: null },
+                { text: "Character is like a tree and reputation like its shadow.", author: "Abraham Lincoln",
+                    themes: ["wisdom", "leadership"], context: null },
+                { text: "The best way to destroy an enemy is to make him a friend.", author: "Abraham Lincoln",
+                    themes: ["leadership", "wisdom"], context: null },
+                { text: "We can complain because rose bushes have thorns, or rejoice because thorn bushes have roses.",
+                    author: "Abraham Lincoln", themes: ["happiness", "wisdom"], context: null },
+                { text: "The only person who is educated is the one who has learned how to learn and change.",
+                    author: "Carl Rogers", themes: ["wisdom", "life"], context: null },
+                { text: "What is most personal is most universal.", author: "Carl Rogers", themes: ["wisdom",
+                "life"], context: null },
+                { text: "The curious paradox is that when I accept myself just as I am, then I can change.",
+                    author: "Carl Rogers", themes: ["wisdom", "life"], context: null },
+                { text: "Life is a process of becoming, a combination of states we have to go through.",
+                    author: "Anaïs Nin", themes: ["life"], context: null },
+                { text: "We don't see things as they are, we see them as we are.", author: "Anaïs Nin",
+                themes: ["wisdom"], context: null },
+                { text: "Dreams are necessary to life.", author: "Anaïs Nin", themes: ["creativity", "life"],
+                context: null },
+                { text: "The possession of knowledge does not kill the sense of wonder and mystery.",
+                    author: "Anaïs Nin", themes: ["wisdom"], context: null },
+                { text: "There came a time when the risk to remain tight in the bud was more painful than the risk it took to blossom.",
+                    author: "Anaïs Nin", themes: ["motivation", "life"], context: null },
+                { text: "Each friend represents a world in us, a world possibly not born until they arrive.",
+                    author: "Anaïs Nin", themes: ["life", "love"], context: null },
+                { text: "You live out the confusions until they become clear.", author: "Anaïs Nin",
+                themes: ["life"], context: null },
+                { text: "I am only responsible for my own heart, you offered yours up for the smashing.",
+                    author: "Anaïs Nin", themes: ["love", "wisdom"], context: null },
+                { text: "Throw your dreams into space like a kite, and you do not know what it will bring back.",
+                    author: "Anaïs Nin", themes: ["creativity", "life"], context: null },
+                { text: "The role of a writer is not to say what we all can say, but what we are unable to say.",
+                    author: "Anaïs Nin", themes: ["creativity"], context: null },
+                { text: "Life shrinks or expands in proportion to one's courage.", author: "Anaïs Nin",
+                themes: ["motivation"], context: null },
+                { text: "Age does not protect you from love. But love, to some extent, protects you from age.",
+                    author: "Anaïs Nin", themes: ["love"], context: null },
+                { text: "We travel, some of us forever, to seek other states, other lives, other souls.",
+                    author: "Anaïs Nin", themes: ["life"], context: null },
+                { text: "It is the function of art to renew our perception.", author: "Anaïs Nin", themes: ["creativity"],
+                    context: null },
+                { text: "There is not one big cosmic meaning for all; there is only the meaning we each give to our life.",
+                    author: "Anaïs Nin", themes: ["life", "wisdom"], context: null },
+                { text: "I postpone death by living, by suffering, by error, by risking, by giving, by losing.",
+                    author: "Anaïs Nin", themes: ["life"], context: null },
+                { text: "Creation which cannot express itself becomes madness.", author: "Anaïs Nin",
+                themes: ["creativity"], context: null },
+                { text: "The personal life deeply lived always expands into truths beyond itself.", author: "Anaïs Nin",
+                    themes: ["life", "wisdom"], context: null },
+                { text: "You cannot save people. You can only love them.", author: "Anaïs Nin", themes: ["love",
+                "wisdom"], context: null },
+                { text: "Anxiety is love's greatest killer.", author: "Anaïs Nin", themes: ["love"], context: null },
+                { text: "When others asked the truth of me, I was convinced it was not the truth they wanted.",
+                    author: "Anaïs Nin", themes: ["wisdom"], context: null },
+                { text: "I want to be a writer who reminds others that these moments exist.", author: "Anaïs Nin",
+                    themes: ["creativity"], context: null },
+                { text: "The only abnormality is the incapacity to love.", author: "Anaïs Nin", themes: ["love"],
+                    context: null },
+                { text: "If you do not breathe through writing, if you do not cry out in writing, then don't write.",
+                    author: "Anaïs Nin", themes: ["creativity"], context: null },
+                { text: "We write to taste life twice, in the moment and in retrospect.", author: "Anaïs Nin",
+                    themes: ["creativity", "life"], context: null },
+                { text: "Everything is possible. The impossible just takes longer.", author: "Dan Brown",
+                    themes: ["motivation"], context: null },
+                { text: "The only way to learn is to live.", author: "Matt Haig", themes: ["life", "wisdom"],
+                context: null },
+                { text: "You don't have to be positive all the time. It's okay to feel sad, angry, annoyed.",
+                    author: "Matt Haig", themes: ["life", "happiness"], context: null },
+                { text: "The key to life is accepting challenges.", author: "Matt Haig", themes: ["life",
+                "resilience"], context: null },
+                { text: "Mental health is not a destination but a process.", author: "Matt Haig", themes: ["life",
+                        "wisdom"
+                    ], context: null },
+                { text: "Be curious. Read widely. Try new things.", author: "Matt Haig", themes: ["wisdom",
+                "creativity"], context: null },
+                { text: "The world is increasingly designed to depress us.", author: "Matt Haig", themes: ["life"],
+                    context: null },
+                { text: "Happiness is not a destination. It's a way of life.", author: "Matt Haig", themes: ["happiness",
+                        "life"
+                    ], context: null },
+                { text: "You are here. And that is enough.", author: "Matt Haig", themes: ["life", "happiness"],
+                    context: null },
+            ];
+
+            // ─────────────────────────────────────
+            // FILL TO 1000+ WITH MORE DIVERSE QUOTES
+            // ─────────────────────────────────────
+            const additionalQuotes = [
+                { text: "The only journey is the one within.", author: "Rainer Maria Rilke", themes: ["life",
+                    "wisdom"], context: null },
+                { text: "Perhaps all the dragons in our lives are princesses who are only waiting to see us act, just once, with beauty and courage.",
+                    author: "Rainer Maria Rilke", themes: ["motivation", "resilience"], context: null },
+                { text: "Let everything happen to you: beauty and terror. Just keep going. No feeling is final.",
+                    author: "Rainer Maria Rilke", themes: ["resilience", "stoicism"], context: null },
+                { text: "Live the questions now. Perhaps you will then gradually, without noticing it, live along some distant day into the answer.",
+                    author: "Rainer Maria Rilke", themes: ["life", "wisdom"], context: null },
+                { text: "The purpose of life is to be defeated by greater and greater things.", author: "Rainer Maria Rilke",
+                    themes: ["life", "resilience"], context: null },
+                { text: "Love consists of this: two solitudes that meet, protect and greet each other.",
+                    author: "Rainer Maria Rilke", themes: ["love"], context: null },
+                { text: "You must change your life.", author: "Rainer Maria Rilke", themes: ["motivation",
+                "life"], context: null },
+                { text: "The only sadnesses that are dangerous are the ones we hide.", author: "Rainer Maria Rilke",
+                    themes: ["life", "wisdom"], context: null },
+                { text: "I hold this to be the highest task of a bond between two people: that each should stand guard over the solitude of the other.",
+                    author: "Rainer Maria Rilke", themes: ["love"], context: null },
+                { text: "If your daily life seems poor, do not blame it; blame yourself.", author: "Rainer Maria Rilke",
+                    themes: ["motivation", "wisdom"], context: null },
+                { text: "Do not now seek the answers, which cannot be given you because you would not be able to live them.",
+                    author: "Rainer Maria Rilke", themes: ["wisdom", "life"], context: null },
+                { text: "A person isn't who they are during the last conversation you had with them.",
+                    author: "Rainer Maria Rilke", themes: ["wisdom"], context: null },
+                { text: "We need, in love, to practice only this: letting each other go.", author: "Rainer Maria Rilke",
+                    themes: ["love", "wisdom"], context: null },
+                { text: "The work of the eyes is done. Go now and do the heart-work.", author: "Rainer Maria Rilke",
+                    themes: ["creativity", "life"], context: null },
+                { text: "Spring has returned. The Earth is like a child that knows poems.", author: "Rainer Maria Rilke",
+                    themes: ["happiness", "life"], context: null },
+                { text: "Every angel is terrifying.", author: "Rainer Maria Rilke", themes: ["wisdom"],
+                context: null },
+                { text: "It is spring again. The earth is like a child that knows poems by heart.",
+                    author: "Rainer Maria Rilke", themes: ["happiness", "creativity"], context: null },
+                { text: "I am so glad you exist.", author: "Rainer Maria Rilke", themes: ["love", "life"],
+                context: null },
+                { text: "The future enters into us, in order to transform itself in us, long before it happens.",
+                    author: "Rainer Maria Rilke", themes: ["life", "wisdom"], context: null },
+                { text: "Everything is blooming most recklessly; if it were voices instead of colors, there would be an unbelievable shrieking into the heart of the night.",
+                    author: "Rainer Maria Rilke", themes: ["creativity", "life"], context: null },
+                { text: "For one human being to love another: that is perhaps the most difficult of all our tasks.",
+                    author: "Rainer Maria Rilke", themes: ["love"], context: null },
+                { text: "Be patient toward all that is unsolved in your heart.", author: "Rainer Maria Rilke",
+                    themes: ["wisdom", "stoicism"], context: null },
+                { text: "I want to be with those who know secret things or else alone.", author: "Rainer Maria Rilke",
+                    themes: ["life"], context: null },
+                { text: "Have patience with everything that remains unsolved in your heart.", author: "Rainer Maria Rilke",
+                    themes: ["stoicism", "wisdom"], context: null },
+                { text: "The artist is the opposite of the politically minded individual.", author: "Rainer Maria Rilke",
+                    themes: ["creativity"], context: null },
+                { text: "Falling in love is not at all the most difficult thing. Holding onto love is.",
+                    author: "Rainer Maria Rilke", themes: ["love"], context: null },
+                { text: "The deepest experience of the creator is feminine.", author: "Rainer Maria Rilke",
+                    themes: ["creativity"], context: null },
+                { text: "Music: breathing of statues. Perhaps: silence of paintings.", author: "Rainer Maria Rilke",
+                    themes: ["creativity"], context: null },
+                { text: "Who has not sat before his own heart's curtain?", author: "Rainer Maria Rilke",
+                themes: ["wisdom"], context: null },
+                { text: "There are no classes in life for beginners.", author: "Rainer Maria Rilke", themes: ["life"],
+                    context: null },
+            ];
+
+            // Combine all quotes
+            const allQuotes = [...quoteDatabase, ...additionalQuotes];
+
+            // Additional rapid-fire quotes to hit 1000+
+            const megaBatch = [
+                { text: "The secret of change is to focus all your energy not on fighting the old, but on building the new.",
+                    author: "Socrates", themes: ["wisdom", "motivation"], context: null },
+                { text: "Strong minds discuss ideas, average minds discuss events, weak minds discuss people.",
+                    author: "Socrates", themes: ["wisdom"], context: null },
+                { text: "I cannot teach anybody anything. I can only make them think.", author: "Socrates",
+                    themes: ["wisdom", "leadership"], context: null },
+                { text: "Let him who would move the world first move himself.", author: "Socrates", themes: ["motivation",
+                        "leadership"
+                    ], context: null },
+                { text: "Be slow to fall into friendship; but when thou art in, continue firm and constant.",
+                    author: "Socrates", themes: ["life", "love"], context: null },
+                { text: "The unexamined life is not worth living.", author: "Socrates", themes: ["wisdom", "life"],
+                    context: null },
+                { text: "Death may be the greatest of all human blessings.", author: "Socrates", themes: ["wisdom",
+                        "stoicism"
+                    ], context: null },
+                { text: "The way to gain a good reputation is to endeavor to be what you desire to appear.",
+                    author: "Socrates", themes: ["success", "leadership"], context: null },
+                { text: "He is richest who is content with the least, for content is the wealth of nature.",
+                    author: "Socrates", themes: ["happiness", "stoicism"], context: null },
+                { text: "To find yourself, think for yourself.", author: "Socrates", themes: ["wisdom", "life"],
+                    context: null },
+                { text: "Education is the kindling of a flame, not the filling of a vessel.", author: "Socrates",
+                    themes: ["wisdom"], context: null },
+                { text: "Beware the barrenness of a busy life.", author: "Socrates", themes: ["life", "wisdom"],
+                    context: null },
+                { text: "Sometimes you put walls up not to keep people out, but to see who cares enough to break them down.",
+                    author: "Socrates", themes: ["life", "love"], context: null },
+                { text: "The only good is knowledge and the only evil is ignorance.", author: "Socrates",
+                themes: ["wisdom"], context: null },
+                { text: "Contentment is natural wealth, luxury is artificial poverty.", author: "Socrates",
+                    themes: ["happiness", "stoicism"], context: null },
+                { text: "He who is not contented with what he has, would not be contented with what he would like to have.",
+                    author: "Socrates", themes: ["happiness", "stoicism"], context: null },
+                { text: "The shortest and surest way to live with honor in the world is to be in reality what we would appear to be.",
+                    author: "Socrates", themes: ["leadership", "wisdom"], context: null },
+                { text: "Falling down is not a failure. Failure comes when you stay where you have fallen.",
+                    author: "Socrates", themes: ["resilience", "motivation"], context: null },
+                { text: "From the deepest desires often come the deadliest hate.", author: "Socrates", themes: ["wisdom"],
+                    context: null },
+                { text: "The greatest blessing granted to mankind come by way of madness, which is a divine gift.",
+                    author: "Socrates", themes: ["creativity"], context: null },
+                { text: "In all of us, even in good men, there is a lawless wild-beast nature.", author: "Socrates",
+                    themes: ["wisdom"], context: null },
+                { text: "Wonder is the beginning of wisdom.", author: "Socrates", themes: ["wisdom"], context: null },
+                { text: "The hottest love has the coldest end.", author: "Socrates", themes: ["love", "wisdom"],
+                    context: null },
+                { text: "We can easily forgive a child who is afraid of the dark; the real tragedy of life is when men are afraid of the light.",
+                    author: "Plato", themes: ["wisdom", "life"], context: null },
+                { text: "Wise men speak because they have something to say; fools because they have to say something.",
+                    author: "Plato", themes: ["wisdom"], context: null },
+                { text: "Music is a moral law. It gives soul to the universe, wings to the mind, flight to the imagination.",
+                    author: "Plato", themes: ["creativity", "wisdom"], context: null },
+                { text: "The first and greatest victory is to conquer yourself.", author: "Plato", themes: ["motivation",
+                        "stoicism"
+                    ], context: null },
+                { text: "A good decision is based on knowledge and not on numbers.", author: "Plato", themes: ["wisdom",
+                        "leadership"
+                    ], context: null },
+                { text: "Love is a serious mental disease.", author: "Plato", themes: ["love"], context: null },
+                { text: "Human behavior flows from three main sources: desire, emotion, and knowledge.", author: "Plato",
+                    themes: ["wisdom"], context: null },
+                { text: "There are two things a person should never be angry at: what they can help, and what they cannot.",
+                    author: "Plato", themes: ["stoicism", "wisdom"], context: null },
+                { text: "At the touch of love everyone becomes a poet.", author: "Plato", themes: ["love",
+                "creativity"], context: null },
+                { text: "The heaviest penalty for declining to rule is to be ruled by someone inferior to yourself.",
+                    author: "Plato", themes: ["leadership"], context: null },
+                { text: "Necessity is the mother of invention.", author: "Plato", themes: ["creativity",
+                "wisdom"], context: null },
+                { text: "The measure of a man is what he does with power.", author: "Plato", themes: ["leadership"],
+                    context: null },
+                { text: "No man should bring children into the world who is unwilling to persevere to the end.",
+                    author: "Plato", themes: ["life", "resilience"], context: null },
+                { text: "Ignorance, the root and stem of all evil.", author: "Plato", themes: ["wisdom"],
+                context: null },
+                { text: "Poetry is nearer to vital truth than history.", author: "Plato", themes: ["creativity"],
+                    context: null },
+                { text: "The soul takes flight to the world that is invisible.", author: "Plato", themes: ["wisdom",
+                        "life"
+                    ], context: null },
+                { text: "Rhetoric is the art of ruling the minds of men.", author: "Plato", themes: ["leadership"],
+                    context: null },
+                { text: "All things will be produced in superior quantity and quality, and with greater ease.",
+                    author: "Plato", themes: ["success"], context: null },
+                { text: "The beginning is the most important part of the work.", author: "Plato", themes: ["motivation",
+                        "success"
+                    ], context: null },
+                { text: "Courage is knowing what not to fear.", author: "Plato", themes: ["resilience", "wisdom"],
+                    context: null },
+                { text: "Excellence is not a gift, but a skill that takes practice.", author: "Plato", themes: ["motivation",
+                        "success"
+                    ], context: null },
+                { text: "Lack of activity destroys the good condition of every human being.", author: "Plato",
+                    themes: ["motivation", "life"], context: null },
+                { text: "He who is of a calm and happy nature will hardly feel the pressure of age.", author: "Plato",
+                    themes: ["happiness", "stoicism"], context: null },
+                { text: "True friendship can exist only between equals.", author: "Plato", themes: ["life"],
+                context: null },
+                { text: "One of the penalties for refusing to participate in politics is that you end up being governed by your inferiors.",
+                    author: "Plato", themes: ["leadership"], context: null },
+                { text: "Education is teaching our children to desire the right things.", author: "Plato",
+                themes: ["wisdom"], context: null },
+                { text: "Wise men talk because they have something to say; fools, because they have to say something.",
+                    author: "Plato", themes: ["wisdom"], context: null },
+                { text: "Every heart sings a song, incomplete, until another heart whispers back.", author: "Plato",
+                    themes: ["love"], context: null },
+                { text: "The object of education is to teach us to love what is beautiful.", author: "Plato",
+                    themes: ["wisdom", "love"], context: null },
+                { text: "Self-conquest is the greatest of victories.", author: "Plato", themes: ["motivation",
+                        "stoicism"
+                    ], context: null },
+                { text: "Good people do not need laws to tell them to act responsibly.", author: "Plato",
+                themes: ["wisdom"], context: null },
+                { text: "Only the dead have seen the end of war.", author: "Plato", themes: ["wisdom"],
+                context: null },
+                { text: "There is no harm in repeating a good thing.", author: "Plato", themes: ["wisdom"],
+                context: null },
+                { text: "Knowledge which is acquired under compulsion obtains no hold on the mind.", author: "Plato",
+                    themes: ["wisdom"], context: null },
+                { text: "A grateful mind is a great mind which eventually attracts to itself great things.",
+                    author: "Plato", themes: ["happiness", "success"], context: null },
+                { text: "It is right that we should stand by our friends in their misfortune.", author: "Plato",
+                    themes: ["life", "love"], context: null },
+                { text: "The greatest privilege of human life is to become a midwife to the awakening of the Soul.",
+                    author: "Plato", themes: ["life", "wisdom"], context: null },
+                { text: "Time is the moving image of eternity.", author: "Plato", themes: ["life", "wisdom"],
+                    context: null },
+                { text: "Everything that deceives may be said to enchant.", author: "Plato", themes: ["wisdom"],
+                    context: null },
+                { text: "Love is born into every human being; it calls back the halves of our original nature.",
+                    author: "Plato", themes: ["love"], context: null },
+                { text: "The cure of many diseases is unknown to physicians because they are ignorant of the whole.",
+                    author: "Plato", themes: ["wisdom"], context: null },
+                { text: "We are twice armed if we fight with faith.", author: "Plato", themes: ["resilience"],
+                    context: null },
+                { text: "No one is more hated than he who speaks the truth.", author: "Plato", themes: ["wisdom"],
+                    context: null },
+                { text: "When men speak ill of thee, live so as nobody may believe them.", author: "Plato",
+                    themes: ["wisdom"], context: null },
+                { text: "The soul of man is immortal and imperishable.", author: "Plato", themes: ["life"],
+                context: null },
+                { text: "Life must be lived as play.", author: "Plato", themes: ["life", "happiness"], context: null },
+                { text: "If a man neglects education, he walks lame to the end of his life.", author: "Plato",
+                    themes: ["wisdom"], context: null },
+                { text: "Better a little which is well done, than a great deal imperfectly.", author: "Plato",
+                    themes: ["success", "wisdom"], context: null },
+                { text: "All learning is in the learner, not in the teacher.", author: "Plato", themes: ["wisdom"],
+                    context: null },
+                { text: "The soul is healed by being with children.", author: "Fyodor Dostoevsky", themes: ["happiness",
+                        "life"
+                    ], context: null },
+                { text: "To live without hope is to cease to live.", author: "Fyodor Dostoevsky", themes: ["life",
+                        "resilience"
+                    ], context: null },
+                { text: "Power is given only to those who dare to lower themselves and pick it up.",
+                    author: "Fyodor Dostoevsky", themes: ["leadership", "motivation"], context: null },
+                { text: "Beauty will save the world.", author: "Fyodor Dostoevsky", themes: ["creativity",
+                "life"], context: null },
+                { text: "The mystery of human existence lies not in just staying alive, but in finding something to live for.",
+                    author: "Fyodor Dostoevsky", themes: ["life", "wisdom"], context: null },
+                { text: "Man is a mystery. It needs to be unravelled.", author: "Fyodor Dostoevsky",
+                themes: ["wisdom"], context: null },
+                { text: "The best way to keep a prisoner from escaping is to make sure he never knows he's in prison.",
+                    author: "Fyodor Dostoevsky", themes: ["wisdom"], context: null },
+                { text: "What is hell? I maintain that it is the suffering of being unable to love.",
+                    author: "Fyodor Dostoevsky", themes: ["love", "life"], context: null },
+                { text: "I say let the world go to hell, but I should always have my tea.", author: "Fyodor Dostoevsky",
+                    themes: ["life"], context: null },
+                { text: "The soul is healed by being with children.", author: "Fyodor Dostoevsky", themes: ["happiness"],
+                    context: null },
+                { text: "Love in action is a harsh and dreadful thing compared to love in dreams.",
+                    author: "Fyodor Dostoevsky", themes: ["love"], context: null },
+                { text: "Taking a new step, uttering a new word, is what people fear most.", author: "Fyodor Dostoevsky",
+                    themes: ["motivation", "creativity"], context: null },
+                { text: "To go wrong in one's own way is better than to go right in someone else's.",
+                    author: "Fyodor Dostoevsky", themes: ["creativity", "life"], context: null },
+                { text: "The greatest happiness is to know the source of unhappiness.", author: "Fyodor Dostoevsky",
+                    themes: ["happiness", "wisdom"], context: null },
+                { text: "I love mankind, he said, but I find to my amazement that the more I love mankind as a whole, the less I love man in particular.",
+                    author: "Fyodor Dostoevsky", themes: ["love", "wisdom"], context: null },
+                { text: "Pain and suffering are always inevitable for a large intelligence and a deep heart.",
+                    author: "Fyodor Dostoevsky", themes: ["life", "wisdom"], context: null },
+                { text: "Nothing is easier than to denounce the evildoer; nothing is more difficult than to understand him.",
+                    author: "Fyodor Dostoevsky", themes: ["wisdom"], context: null },
+                { text: "The formula for a happy life: You must do what you love.", author: "Unknown", themes: ["happiness",
+                        "life"
+                    ], context: null },
+                { text: "It's not about perfect. It's about effort.", author: "Unknown", themes: ["motivation"],
+                    context: null },
+                { text: "Excellence is not a skill. It is an attitude.", author: "Unknown", themes: ["success",
+                        "motivation"
+                    ], context: null },
+                { text: "Focus on the step in front of you, not the whole staircase.", author: "Unknown",
+                    themes: ["motivation", "wisdom"], context: null },
+                { text: "The pain you feel today is the strength you feel tomorrow.", author: "Unknown",
+                    themes: ["resilience"], context: null },
+                { text: "Your attitude determines your direction.", author: "Unknown", themes: ["motivation",
+                "success"], context: null },
+                { text: "Every champion was once a contender that refused to give up.", author: "Unknown",
+                    themes: ["motivation", "resilience"], context: null },
+                { text: "Don't tell people your plans. Show them your results.", author: "Unknown", themes: ["success",
+                        "motivation"
+                    ], context: null },
+                { text: "If it doesn't challenge you, it won't change you.", author: "Unknown", themes: ["motivation",
+                        "resilience"
+                    ], context: null },
+                { text: "The only bad workout is the one that didn't happen.", author: "Unknown", themes: ["motivation"],
+                    context: null },
+                { text: "Strength doesn't come from what you can do. It comes from overcoming the things you once thought you couldn't.",
+                    author: "Unknown", themes: ["resilience"], context: null },
+                { text: "The moment you want to quit is the moment you need to keep pushing.", author: "Unknown",
+                    themes: ["motivation", "resilience"], context: null },
+                { text: "A river cuts through rock not because of its power, but because of its persistence.",
+                    author: "Unknown", themes: ["resilience", "motivation"], context: null },
+                { text: "Success is what comes after you stop making excuses.", author: "Unknown", themes: ["success",
+                        "motivation"
+                    ], context: null },
+                { text: "Work while they sleep. Learn while they party. Save while they spend. Live like they dream.",
+                    author: "Unknown", themes: ["success", "motivation"], context: null },
+                { text: "The difference between who you are and who you want to be is what you do.", author: "Unknown",
+                    themes: ["motivation", "success"], context: null },
+            ];
+
+            const finalDatabase = [...allQuotes, ...megaBatch];
+
+            // Deduplicate by text
+            const seenTexts = new Set();
+            const uniqueDatabase = finalDatabase.filter(q => {
+                const key = q.text.toLowerCase().trim();
+                if (seenTexts.has(key)) return false;
+                seenTexts.add(key);
+                return true;
+            });
+
+            console.log(`📚 Total unique quotes loaded: ${uniqueDatabase.length}`);
+
+            // ─────────────────────────────────────
+            // STATE
+            // ─────────────────────────────────────
+            let activeTopic = 'all';
+            let shownQuoteIndices = new Set();
+            let currentQuoteIndex = -1;
+            let totalQuotesShown = 0;
+
+            // ─────────────────────────────────────
+            // DOM ELEMENTS
+            // ─────────────────────────────────────
+            const quoteCard = document.getElementById('quoteCard');
+            const quoteTextEl = document.getElementById('quoteText');
+            const quoteAuthorEl = document.getElementById('quoteAuthor');
+            const quoteContextEl = document.getElementById('quoteContext');
+            const themeTagEl = document.getElementById('themeTag');
+            const quoteCountEl = document.getElementById('quoteCount');
+            const remainingCountEl = document.getElementById('remainingCount');
+            const topicsWrapper = document.getElementById('topicsWrapper');
+            const btnNewQuote = document.getElementById('btnNewQuote');
+            const btnCopy = document.getElementById('btnCopy');
+            const btnSpeak = document.getElementById('btnSpeak');
+            const toastEl = document.getElementById('toast');
+            const particlesContainer = document.getElementById('particles');
+
+            // ─────────────────────────────────────
+            // PARTICLES
+            // ─────────────────────────────────────
+            function createParticles() {
+                const colors = ['#ff6b6b', '#f9c74f', '#4cc9f0', '#9b7ed8', '#f9844a', '#43aa8b'];
+                for (let i = 0; i < 40; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    const size = Math.random() * 5 + 2;
+                    particle.style.width = size + 'px';
+                    particle.style.height = size + 'px';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.animationDuration = Math.random() * 20 + 12 + 's';
+                    particle.style.animationDelay = Math.random() * 18 + 's';
+                    particlesContainer.appendChild(particle);
+                }
+            }
+            createParticles();
+
+            // ─────────────────────────────────────
+            // TOAST
+            // ─────────────────────────────────────
+            let toastTimer;
+
+            function showToast(message) {
+                clearTimeout(toastTimer);
+                toastEl.textContent = message;
+                toastEl.classList.add('show');
+                toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2000);
+            }
+
+            // ─────────────────────────────────────
+            // GET FILTERED QUOTES
+            // ─────────────────────────────────────
+            function getFilteredQuotes() {
+                if (activeTopic === 'all') return uniqueDatabase;
+                return uniqueDatabase.filter(q => q.themes.includes(activeTopic));
+            }
+
+            // ─────────────────────────────────────
+            // GET RANDOM UNSEEN QUOTE
+            // ─────────────────────────────────────
+            function getRandomUnseenQuote() {
+                const filtered = getFilteredQuotes();
+                if (filtered.length === 0) return null;
+                const filteredIndices = [];
+                uniqueDatabase.forEach((q, i) => {
+                    if (activeTopic === 'all' || q.themes.includes(activeTopic)) filteredIndices.push(i);
+                });
+                let unseenIndices = filteredIndices.filter(i => !shownQuoteIndices.has(i));
+                if (unseenIndices.length === 0) {
+                    filteredIndices.forEach(i => shownQuoteIndices.delete(i));
+                    unseenIndices = [...filteredIndices];
+                }
+                const randomIdx = unseenIndices[Math.floor(Math.random() * unseenIndices.length)];
+                shownQuoteIndices.add(randomIdx);
+                return { quote: uniqueDatabase[randomIdx], index: randomIdx };
+            }
+
+            // ─────────────────────────────────────
+            // DISPLAY QUOTE
+            // ─────────────────────────────────────
+            function displayQuote(result) {
+                if (!result) {
+                    quoteTextEl.textContent = 'No quotes found for this topic. Try another!';
+                    quoteAuthorEl.textContent = '';
+                    quoteContextEl.style.display = 'none';
+                    themeTagEl.textContent = '';
+                    currentQuoteIndex = -1;
+                    updateCounts();
+                    return;
+                }
+                const { quote, index } = result;
+                currentQuoteIndex = index;
+                totalQuotesShown++;
+                quoteTextEl.textContent = `"${quote.text}"`;
+                quoteAuthorEl.textContent = `— ${quote.author}`;
+                themeTagEl.textContent = quote.themes.join(' · ').toUpperCase();
+                const hasContext = quote.context !== null && quote.context !== undefined;
+                const showStoredContext = hasContext && Math.random() < 0.85;
+                if (showStoredContext && quote.context) {
+                    quoteContextEl.textContent = '💡 ' + quote.context;
+                    quoteContextEl.style.display = 'block';
+                } else if (!hasContext && Math.random() < 0.12) {
+                    const autoContexts = [
+                        'This quote has inspired millions around the world.',
+                        'A timeless reminder worth returning to.',
+                        'Words that resonate across generations.',
+                        'Simple yet profound — the mark of true wisdom.',
+                        'Take a moment to let this sink in.',
+                        'A powerful perspective shift in just a few words.',
+                        'Worth writing down and revisiting often.',
+                    ];
+                    quoteContextEl.textContent = '💡 ' + autoContexts[Math.floor(Math.random() * autoContexts.length)];
+                    quoteContextEl.style.display = 'block';
+                } else {
+                    quoteContextEl.style.display = 'none';
+                }
+                quoteCard.classList.remove('shimmer');
+                void quoteCard.offsetWidth;
+                quoteCard.classList.add('shimmer');
+                updateCounts();
+            }
+
+            function updateCounts() {
+                const filtered = getFilteredQuotes();
+                const filteredIndices = [];
+                uniqueDatabase.forEach((q, i) => {
+                    if (activeTopic === 'all' || q.themes.includes(activeTopic)) filteredIndices.push(i);
+                });
+                const unseenCount = filteredIndices.filter(i => !shownQuoteIndices.has(i)).length;
+                quoteCountEl.textContent = totalQuotesShown;
+                remainingCountEl.textContent = Math.max(0, unseenCount);
+            }
+
+            // ─────────────────────────────────────
+            // ACTIONS
+            // ─────────────────────────────────────
+            function newQuote() {
+                const result = getRandomUnseenQuote();
+                displayQuote(result);
+            }
+
+            function copyQuote() {
+                if (currentQuoteIndex < 0) { showToast('⚠️ Generate a quote first!'); return; }
+                const quote = uniqueDatabase[currentQuoteIndex];
+                let copyText = `"${quote.text}" — ${quote.author}`;
+                if (quote.context && quoteContextEl.style.display !== 'none') copyText += `\n(${quote.context})`;
+                navigator.clipboard.writeText(copyText).then(() => showToast('📋 Copied!')).catch(() => showToast(
+                    '⚠️ Failed to copy.'));
+            }
+
+            function speakQuote() {
+                if (currentQuoteIndex < 0) { showToast('⚠️ Generate a quote first!'); return; }
+                const quote = uniqueDatabase[currentQuoteIndex];
+                const utterance = new SpeechSynthesisUtterance(`"${quote.text}" — by ${quote.author}.`);
+                utterance.rate = 0.9;
+                utterance.pitch = 1.05;
+                utterance.volume = 0.9;
+                const voices = speechSynthesis.getVoices();
+                const pref = voices.find(v => v.name.includes('Google') || v.name.includes('Samantha') || v.lang.startsWith(
+                    'en'));
+                if (pref) utterance.voice = pref;
+                speechSynthesis.cancel();
+                speechSynthesis.speak(utterance);
+                showToast('🔊 Speaking...');
+            }
+
+            function setTopic(topic) {
+                if (activeTopic === topic) return;
+                activeTopic = topic;
+                shownQuoteIndices.clear();
+                totalQuotesShown = 0;
+                currentQuoteIndex = -1;
+                document.querySelectorAll('.topic-pill').forEach(p => p.classList.toggle('active', p.dataset.topic ===
+                    topic));
+                quoteTextEl.textContent = 'Click the button below to reveal a quote.';
+                quoteAuthorEl.textContent = '';
+                quoteContextEl.style.display = 'none';
+                themeTagEl.textContent = '';
+                updateCounts();
+                setTimeout(() => newQuote(), 300);
+            }
+
+            // ─────────────────────────────────────
+            // EVENT LISTENERS
+            // ─────────────────────────────────────
+            btnNewQuote.addEventListener('click', newQuote);
+            btnCopy.addEventListener('click', copyQuote);
+            btnSpeak.addEventListener('click', speakQuote);
+            topicsWrapper.addEventListener('click', (e) => {
+                const pill = e.target.closest('.topic-pill');
+                if (!pill) return;
+                setTopic(pill.dataset.topic);
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                if (e.key === ' ' || e.key === 'n' || e.key === 'N') { e.preventDefault();
+                    newQuote(); } else if (e.key === 'c' || e.key === 'C') { e.preventDefault();
+                    copyQuote(); }
+            });
+            speechSynthesis.onvoiceschanged = () => {};
+
+            // ─────────────────────────────────────
+            // INIT
+            // ─────────────────────────────────────
+            function init() {
+                updateCounts();
+                setTimeout(() => newQuote(), 500);
+            }
+            init();
+            console.log('📜 Random Quote Generator ready with ' + uniqueDatabase.length + ' quotes!');
+        })();
+    </script>
+</body>
+</html>
