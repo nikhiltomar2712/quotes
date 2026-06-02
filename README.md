@@ -38,3 +38,8 @@ No dependencies, no build steps – it’s a standalone HTML file.
 ---
 
 ## 📁 Project Structure
+
+random-quote-generator/
+├── index.html # The complete application (HTML + CSS + JS)
+├── LICENSE
+└── README.md
