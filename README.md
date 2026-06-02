@@ -21,9 +21,7 @@ A beautifully crafted, single‑page web application that instantly serves fresh
 
 ## 🚀 Live Demo
 
-https://your-username.github.io/random-quote-generator
 
-*(Replace with your GitHub Pages link after deployment)*
 
 ---
 
