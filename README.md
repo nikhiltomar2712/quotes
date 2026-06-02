@@ -21,7 +21,7 @@ A beautifully crafted, single‑page web application that instantly serves fresh
 
 ## 🚀 Live Demo
 
-
+https://github.com/nikhiltomar2712/quotes.git
 
 ---
 
